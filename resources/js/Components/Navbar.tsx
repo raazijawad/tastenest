@@ -65,8 +65,14 @@ export default function Navbar() {
                             </button>
                             <div className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                                 <Link
-                                    href="/profile"
+                                    href={auth.user.role === 'admin' ? '/admin-dashboard' : '/dashboard'}
                                     className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-t-lg transition"
+                                >
+                                    {auth.user.role === 'admin' ? 'Admin Dashboard' : 'My Dashboard'}
+                                </Link>
+                                <Link
+                                    href="/profile"
+                                    className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition"
                                 >
                                     My Profile
                                 </Link>

@@ -23,8 +23,20 @@ Route::get('/menu', function () {
 
 // Protected Routes (Require Authentication)
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+
     Route::get('/profile', function () {
         return Inertia::render('Profile');
     })->name('profile');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// Admin Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/admin-dashboard', function () {
+        return Inertia::render('AdminDashboard');
+    })->name('admin-dashboard');
 });
