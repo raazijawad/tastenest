@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Variants } from 'framer-motion';
 import React from 'react';
+import Layout from '@/Components/Layout';
 
 export default function DishMenu() {
     const fadeInUp: Variants = {
@@ -144,7 +145,7 @@ export default function DishMenu() {
     const sortedCategories = categoryOrder.filter(cat => categories.includes(cat));
 
     return (
-        <>
+        <Layout>
             <Head title="Menu - TasteNest">
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -155,42 +156,6 @@ export default function DishMenu() {
                 {/* Background Elements */}
                 <div className="absolute inset-0 z-0 bg-noise opacity-30 mix-blend-overlay pointer-events-none" />
                 <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-[#E05D36] rounded-full blur-[120px] opacity-[0.03] pointer-events-none translate-x-1/3 -translate-y-1/3" />
-
-                {/* Navbar */}
-                <motion.header
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-40 px-6 py-6 lg:px-12 lg:py-8 flex justify-between items-center border-b border-white/5"
-                >
-                    <Link href="/" className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
-                        <span className="font-serif text-2xl tracking-[0.15em] font-bold text-white uppercase">
-                            TasteNest
-                        </span>
-                    </Link>
-
-                    <div className="flex items-center gap-4">
-                        <nav className="hidden md:flex items-center space-x-8">
-                            {['Home', 'Menu', 'Order', 'Contact'].map((link) => (
-                                <a
-                                    key={link}
-                                    href={link === 'Home' ? '/' : '#'}
-                                    className={`text-sm tracking-widest font-medium uppercase transition-colors ${link === 'Menu' ? 'text-[#E05D36]' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    {link}
-                                </a>
-                            ))}
-                        </nav>
-
-                        <Link href="/" className="md:hidden">
-                            <button className="text-gray-400 hover:text-white transition-colors">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                </svg>
-                            </button>
-                        </Link>
-                    </div>
-                </motion.header>
 
                 {/* Content */}
                 <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-10 py-20">
@@ -337,6 +302,6 @@ export default function DishMenu() {
                     </div>
                 </motion.footer>
             </div>
-        </>
+        </Layout>
     );
 }

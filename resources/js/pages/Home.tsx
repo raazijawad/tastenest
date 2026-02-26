@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Variants } from 'framer-motion';
+import Layout from '@/Components/Layout';
 
 export default function Home() {
     // Animation variants
@@ -34,7 +35,7 @@ export default function Home() {
     };
 
     return (
-        <>
+        <Layout>
             <Head title="Reserve Your Table - TasteNest">
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -57,48 +58,6 @@ export default function Home() {
                 <div className="absolute inset-0 z-0 bg-black/60 backdrop-blur-[2px]" />
                 <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#111315] via-transparent to-black/80" />
                 <div className="absolute inset-0 z-0 bg-noise opacity-30" />
-
-                {/* Navbar */}
-                <motion.header
-                    variants={staggeredContainer}
-                    initial="hidden"
-                    animate="show"
-                    className="absolute top-0 inset-x-0 z-40 px-6 py-6 lg:px-12 lg:py-8 flex justify-between items-center"
-                >
-                    {/* Logo */}
-                    <motion.div variants={navItemVariants} className="flex items-center space-x-2 cursor-pointer">
-                        <span className="font-serif text-2xl tracking-[0.15em] font-bold text-white uppercase">
-                            TasteNest
-                        </span>
-                    </motion.div>
-
-                    {/* Desktop Nav Links */}
-                    <nav className="hidden lg:flex items-center space-x-10">
-                        {['Home', 'Pages', 'Menu', 'Order', 'Blog', 'Contact', 'Shop'].map((link, i) => (
-                            <motion.div key={link} variants={navItemVariants} className="relative group">
-                                <a
-                                    href="#"
-                                    className={`text-sm tracking-widest font-medium uppercase transition-colors ${link === 'Home' ? 'text-white' : 'text-gray-400 hover:text-white'
-                                        }`}
-                                >
-                                    {link}
-                                </a>
-                                {/* Active indicator for Home */}
-                                {link === 'Home' && (
-                                    <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-[#E05D36]" />
-                                )}
-                            </motion.div>
-                        ))}
-                    </nav>
-
-                    {/* Reservation CTA */}
-                    <motion.button
-                        variants={navItemVariants}
-                        className="hidden md:inline-block bg-[#E05D36] hover:bg-[#C8502D] text-white text-xs tracking-[0.2em] font-medium uppercase px-8 py-3 transition-colors rounded-sm"
-                    >
-                        Reservation
-                    </motion.button>
-                </motion.header>
 
                 {/* Hero Center Content */}
                 <main className="relative z-20 h-full flex flex-col items-center justify-center px-4 text-center">
@@ -742,6 +701,6 @@ export default function Home() {
                     </div>
                 </div>
             </footer>
-        </>
+        </Layout>
     );
 }
