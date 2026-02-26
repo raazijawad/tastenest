@@ -1,19 +1,49 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import {
+    BarChart3,
+    Users,
+    Calendar,
+    UtensilsCrossed,
+    Folder,
+    Target,
+    TrendingUp,
+    LogOut,
+    DollarSign,
+    ChevronLeft,
+    ChevronRight,
+} from 'lucide-react';
+
+const iconMap: { [key: string]: React.ReactNode } = {
+    overview: <BarChart3 size={20} />,
+    users: <Users size={20} />,
+    reservations: <Calendar size={20} />,
+    orders: <UtensilsCrossed size={20} />,
+    categories: <Folder size={20} />,
+    products: <Target size={20} />,
+    analytics: <TrendingUp size={20} />,
+};
+
+const kpiIcons = {
+    users: <Users size={32} className="opacity-20" />,
+    revenue: <DollarSign size={32} className="opacity-20" />,
+    orders: <UtensilsCrossed size={32} className="opacity-20" />,
+    reservations: <Calendar size={32} className="opacity-20" />,
+};
 
 export default function AdminDashboard({ auth }: any) {
     const [activeSection, setActiveSection] = useState('overview');
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     const menuItems = [
-        { id: 'overview', label: 'Overview', icon: '📊', section: 'dashboard' },
-        { id: 'users', label: 'Users', icon: '👥', section: 'management' },
-        { id: 'reservations', label: 'Reservations', icon: '📅', section: 'management' },
-        { id: 'orders', label: 'Orders', icon: '🍔', section: 'management' },
-        { id: 'categories', label: 'Category Resources', icon: '📂', section: 'resources' },
-        { id: 'products', label: 'Product Resources', icon: '🎯', section: 'resources' },
-        { id: 'analytics', label: 'Analytics', icon: '📈', section: 'insights' },
+        { id: 'overview', label: 'Overview', section: 'dashboard' },
+        { id: 'users', label: 'Users', section: 'management' },
+        { id: 'reservations', label: 'Reservations', section: 'management' },
+        { id: 'orders', label: 'Orders', section: 'management' },
+        { id: 'categories', label: 'Category Resources', section: 'resources' },
+        { id: 'products', label: 'Product Resources', section: 'resources' },
+        { id: 'analytics', label: 'Analytics', section: 'insights' },
     ];
 
     return (
@@ -52,7 +82,7 @@ export default function AdminDashboard({ auth }: any) {
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="hidden lg:flex p-1 hover:bg-gray-800 rounded-lg transition text-gray-400 hover:text-white"
                         >
-                            {sidebarOpen ? '←' : '→'}
+                            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
                         </button>
                     </div>
 
@@ -102,7 +132,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                         }`}
                                     >
-                                        <span className="text-xl flex-shrink-0">{item.icon}</span>
+                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
                                         {sidebarOpen && (
                                             <span className="text-sm font-medium truncate">{item.label}</span>
                                         )}
@@ -134,7 +164,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                         }`}
                                     >
-                                        <span className="text-xl flex-shrink-0">{item.icon}</span>
+                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
                                         {sidebarOpen && (
                                             <span className="text-sm font-medium truncate">{item.label}</span>
                                         )}
@@ -166,7 +196,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                         }`}
                                     >
-                                        <span className="text-xl flex-shrink-0">{item.icon}</span>
+                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
                                         {sidebarOpen && (
                                             <span className="text-sm font-medium truncate">{item.label}</span>
                                         )}
@@ -198,7 +228,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                         }`}
                                     >
-                                        <span className="text-xl flex-shrink-0">{item.icon}</span>
+                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
                                         {sidebarOpen && (
                                             <span className="text-sm font-medium truncate">{item.label}</span>
                                         )}
@@ -222,7 +252,7 @@ export default function AdminDashboard({ auth }: any) {
                                 !sidebarOpen && 'justify-center'
                             }`}
                         >
-                            <span className="text-xl">🚪</span>
+                            <span className="flex-shrink-0"><LogOut size={20} /></span>
                             {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
                         </Link>
                     </motion.div>
@@ -259,10 +289,10 @@ export default function AdminDashboard({ auth }: any) {
                                     {/* KPI Cards */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                         {[
-                                            { label: 'Total Users', value: '2,547', change: '+12%', icon: '👥', color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30' },
-                                            { label: 'Total Revenue', value: '$24,580', change: '+8%', icon: '💰', color: 'from-green-500/20 to-green-600/10 border-green-500/30' },
-                                            { label: 'Pending Orders', value: '34', change: 'Awaiting', icon: '🍔', color: 'from-orange-500/20 to-orange-600/10 border-orange-500/30' },
-                                            { label: 'Reservations Today', value: '18', change: 'All confirmed', icon: '📅', color: 'from-purple-500/20 to-purple-600/10 border-purple-500/30' },
+                                            { label: 'Total Users', value: '2,547', change: '+12%', key: 'users', color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30' },
+                                            { label: 'Total Revenue', value: '$24,580', change: '+8%', key: 'revenue', color: 'from-green-500/20 to-green-600/10 border-green-500/30' },
+                                            { label: 'Pending Orders', value: '34', change: 'Awaiting', key: 'orders', color: 'from-orange-500/20 to-orange-600/10 border-orange-500/30' },
+                                            { label: 'Reservations Today', value: '18', change: 'All confirmed', key: 'reservations', color: 'from-purple-500/20 to-purple-600/10 border-purple-500/30' },
                                         ].map((card, i) => (
                                             <motion.div
                                                 key={i}
@@ -276,7 +306,7 @@ export default function AdminDashboard({ auth }: any) {
                                                         <p className="text-gray-400 text-sm mb-2">{card.label}</p>
                                                         <div className="text-3xl font-bold text-white">{card.value}</div>
                                                     </div>
-                                                    <span className="text-4xl opacity-20">{card.icon}</span>
+                                                    <span className="opacity-20">{kpiIcons[card.key as keyof typeof kpiIcons]}</span>
                                                 </div>
                                                 <p className="text-xs text-gray-400">{card.change} from last month</p>
                                             </motion.div>
@@ -391,7 +421,7 @@ export default function AdminDashboard({ auth }: any) {
                                             >
                                                 <div className="flex items-start justify-between mb-4">
                                                     <h3 className="text-lg font-bold text-white">{cat}</h3>
-                                                    <span className="text-2xl">📁</span>
+                                                    <Folder size={32} className="opacity-40" />
                                                 </div>
                                                 <p className="text-gray-400 text-sm mb-6">{8 - i * 2} items in this category</p>
                                                 <div className="flex gap-2">
