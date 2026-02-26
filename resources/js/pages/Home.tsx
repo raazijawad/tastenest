@@ -1,10 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { Variants } from 'framer-motion';
 
 export default function Home() {
-    //... existing code ...// (I will let the tool handle the diff accurately by providing sufficient context, wait actually I must provide precise TargetContent)
     // Animation variants
-    const staggeredContainer = {
+    const staggeredContainer: Variants = {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
@@ -15,7 +15,7 @@ export default function Home() {
         }
     };
 
-    const fadeInUp = {
+    const fadeInUp: Variants = {
         hidden: { opacity: 0, y: 30 },
         show: {
             opacity: 1,
@@ -28,16 +28,16 @@ export default function Home() {
         }
     };
 
-    const navItemVariants = {
+    const navItemVariants: Variants = {
         hidden: { opacity: 0, y: -20 },
-        show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 50 } }
+        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50 } }
     };
 
     return (
         <>
             <Head title="Reserve Your Table - TasteNest">
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
             </Head>
 
