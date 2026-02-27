@@ -32,99 +32,143 @@ export default function DishMenu() {
     const dishes = [
         {
             id: 1,
+            title: "Classic Burger",
             name: "Classic Burger",
             category: "Burgers",
             price: "$18.00",
+            oldPrice: "$22.00",
+            time: "12 mins",
+            serves: "1-2",
             description: "Dry-aged beef blend, house brioche, signature sauce, aged cheddar",
             image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 2,
+            title: "Cheese Burger",
             name: "Cheese Burger",
             category: "Burgers",
             price: "$17.50",
+            oldPrice: "$20.50",
+            time: "10 mins",
+            serves: "1-2",
             description: "Melted cheddar, crispy lettuce, tomato, caramelized onions, house sauce",
             image: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=2070&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 3,
+            title: "Crispy Burger",
             name: "Crispy Burger",
             category: "Burgers",
             price: "$19.50",
+            oldPrice: "$24.50",
+            time: "14 mins",
+            serves: "1-2",
             description: "Double fried patty, jalapeños, pepper jack, crispy onion strings",
             image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2000&auto=format&fit=crop",
             spicy: true
         },
         {
             id: 4,
+            title: "Truffle Luxe Burger",
             name: "Truffle Luxe Burger",
             category: "Burgers",
             price: "$24.00",
+            oldPrice: "$32.00",
+            time: "15 mins",
+            serves: "2",
             description: "Black truffle aioli, wagyu beef, foie gras, aged gruyère, microgreens",
             image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=2000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 5,
+            title: "Chicken Pasta",
             name: "Chicken Pasta",
             category: "Pasta",
             price: "$16.00",
+            oldPrice: "$19.00",
+            time: "18 mins",
+            serves: "1-2",
             description: "Grilled chicken breast, linguine, garlic butter, parmesan crisps",
             image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?q=80&w=2000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 6,
+            title: "Beef Pasta",
             name: "Beef Pasta",
             category: "Pasta",
             price: "$18.50",
+            oldPrice: "$22.50",
+            time: "20 mins",
+            serves: "2",
             description: "Argentinian beef ragù, pappardelle, truffle oil, aged parmesan",
             image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?q=80&w=2000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 7,
+            title: "Spicy Arrabbiata",
             name: "Spicy Arrabbiata",
             category: "Pasta",
             price: "$14.00",
+            oldPrice: "$17.00",
+            time: "16 mins",
+            serves: "1-2",
             description: "Chili flakes, guanciale, tomatoes, pecorino romano, fresh pasta",
             image: "https://images.unsplash.com/photo-1612874742237-6526221fcf16?q=80&w=2000&auto=format&fit=crop",
             spicy: true
         },
         {
             id: 8,
+            title: "Creamy Alfredo",
             name: "Creamy Alfredo",
             category: "Pasta",
             price: "$15.00",
+            oldPrice: "$18.50",
+            time: "17 mins",
+            serves: "1-2",
             description: "Fettuccine, aged gruyère, butter, white wine, cracked black pepper",
             image: "https://images.unsplash.com/photo-1645112917141-540bc8acbbec?q=80&w=2000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 9,
+            title: "Crispy Fries",
             name: "Crispy Fries",
             category: "Sides",
             price: "$6.00",
+            oldPrice: "$8.00",
+            time: "8 mins",
+            serves: "2-3",
             description: "Hand-cut, double-fried, truffle salt & house sauce",
             image: "https://images.unsplash.com/photo-1585238341710-57acf2997b67?q=80&w=1000&auto=format&fit=crop",
             spicy: false
         },
         {
             id: 10,
+            title: "Charred Jalapeño Poppers",
             name: "Charred Jalapeño Poppers",
             category: "Sides",
             price: "$8.00",
+            oldPrice: "$10.50",
+            time: "10 mins",
+            serves: "2-3",
             description: "Cream cheese stuffed, crispy panko, cooling ranch dip",
             image: "https://images.unsplash.com/photo-1609501676725-7186f017a4b5?q=80&w=1000&auto=format&fit=crop",
             spicy: true
         },
         {
             id: 11,
+            title: "Classic Milkshake",
             name: "Classic Milkshake",
             category: "Beverages",
             price: "$5.50",
+            oldPrice: "$7.00",
+            time: "5 mins",
+            serves: "1",
             description: "Vanilla, Chocolate, Strawberry - 16oz premium shake",
             image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=1000&auto=format&fit=crop",
             spicy: false
@@ -229,26 +273,24 @@ export default function DishMenu() {
                                             </div>
 
                                             {/* Content */}
-                                            <div className="p-4 flex flex-col h-full">
-                                                <h3 className="font-serif text-lg text-white mb-2 uppercase tracking-tight">
-                                                    {dish.name}
+                                            <div className="p-6 flex flex-col flex-grow relative z-30 -mt-4">
+                                                <h3 className="font-serif text-lg text-[#E05D36] mb-1 font-semibold tracking-wide group-hover:text-white transition-colors duration-500">
+                                                    {dish.title}
                                                 </h3>
 
-                                                <p className="font-sans text-xs text-gray-400 mb-3 leading-relaxed flex-grow">
-                                                    {dish.description}
-                                                </p>
-
-                                                <div className="flex justify-between items-center mt-auto pt-3 border-t border-white/5">
-                                                    <span className="font-sans text-[#E05D36] font-bold text-sm tracking-wide">
-                                                        {dish.price}
-                                                    </span>
-
-                                                    <button className="text-gray-400 hover:text-[#E05D36] transition-colors">
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                                        </svg>
-                                                    </button>
+                                                <div className="font-sans text-[10px] text-gray-500 tracking-wider mb-4 uppercase">
+                                                    Time: {dish.time} | Serves: {dish.serves}
                                                 </div>
+
+                                                <div className="flex items-center gap-2 mb-6">
+                                                    <span className="font-sans text-lg text-white font-semibold">{dish.price}</span>
+                                                    <span className="font-sans text-xs text-gray-500 line-through">{dish.oldPrice}</span>
+                                                </div>
+
+                                                <button className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-6 py-2 w-fit text-[10px] tracking-[0.2em] font-semibold uppercase transition-colors">
+                                                    <span className="relative z-10">Order Now</span>
+                                                    <div className="absolute inset-0 bg-[#C8502D] scale-x-0 origin-left group-hover/btn:scale-x-100 transition-transform duration-300" />
+                                                </button>
                                             </div>
                                         </motion.div>
                                     ))}
