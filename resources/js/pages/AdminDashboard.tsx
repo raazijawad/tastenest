@@ -60,38 +60,12 @@ export default function AdminDashboard({ auth }: any) {
                         sidebarOpen ? 'w-72' : 'w-20'
                     } bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-r border-gray-800 overflow-y-auto transition-all duration-300 flex flex-col`}
                 >
-                    {/* Logo Section */}
-                    <div className="h-24 flex items-center justify-between px-6 border-b border-gray-800">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}
-                        >
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#E05D36] to-[#C8502D] flex items-center justify-center font-bold text-lg">
-                                T
-                            </div>
-                            {sidebarOpen && (
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-bold tracking-wider">TASTE</span>
-                                    <span className="text-xs text-gray-400">NEST</span>
-                                </div>
-                            )}
-                        </motion.div>
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="hidden lg:flex p-1 hover:bg-gray-800 rounded-lg transition text-gray-400 hover:text-white"
-                        >
-                            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-                        </button>
-                    </div>
-
                     {/* Admin Info */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className={`${sidebarOpen ? 'px-6 py-4' : 'px-3 py-4'} border-b border-gray-800`}
+                        className={`${sidebarOpen ? 'px-6 py-3' : 'px-3 py-3'} border-b border-gray-800 flex items-center justify-between`}
                     >
                         <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}>
                             <div className="w-10 h-10 rounded-full bg-[#E05D36]/20 flex items-center justify-center">
@@ -103,6 +77,23 @@ export default function AdminDashboard({ auth }: any) {
                                     <span className="text-xs text-gray-500">Administrator</span>
                                 </div>
                             )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setSidebarOpen(!sidebarOpen)}
+                                className="hidden lg:flex p-1 hover:bg-gray-800 rounded-lg transition text-gray-400 hover:text-white"
+                            >
+                                {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+                            </button>
+                            <Link
+                                href="/logout"
+                                method="post"
+                                as="button"
+                                className="p-1 hover:bg-red-500/10 rounded-lg transition text-gray-400 hover:text-red-400"
+                                title="Logout"
+                            >
+                                <LogOut size={20} />
+                            </Link>
                         </div>
                     </motion.div>
 
@@ -126,7 +117,7 @@ export default function AdminDashboard({ auth }: any) {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.1 * i }}
                                         onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
                                             activeSection === item.id
                                                 ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/30'
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -158,7 +149,7 @@ export default function AdminDashboard({ auth }: any) {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.15 * i }}
                                         onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
                                             activeSection === item.id
                                                 ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/30'
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -190,7 +181,7 @@ export default function AdminDashboard({ auth }: any) {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.2 * i }}
                                         onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
                                             activeSection === item.id
                                                 ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/30'
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -222,7 +213,7 @@ export default function AdminDashboard({ auth }: any) {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.25 * i }}
                                         onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
                                             activeSection === item.id
                                                 ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/30'
                                                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -236,26 +227,6 @@ export default function AdminDashboard({ auth }: any) {
                                 ))}
                         </div>
                     </nav>
-
-                    {/* Logout Button */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="p-3 border-t border-gray-800"
-                    >
-                        <Link
-                            href="/logout"
-                            method="post"
-                            as="button"
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all ${
-                                !sidebarOpen && 'justify-center'
-                            }`}
-                        >
-                            <span className="flex-shrink-0"><LogOut size={20} /></span>
-                            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
-                        </Link>
-                    </motion.div>
                 </motion.div>
 
                 {/* Main Content */}
