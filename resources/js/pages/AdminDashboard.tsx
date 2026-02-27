@@ -1,625 +1,706 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { motion, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    BarChart3,
+    LayoutDashboard,
     Users,
-    Calendar,
-    UtensilsCrossed,
-    Folder,
-    Target,
-    TrendingUp,
+    Building2,
+    Handshake,
+    Inbox,
+    CheckSquare,
+    BarChart2,
+    CalendarDays,
+    Settings,
+    HelpCircle,
     LogOut,
-    DollarSign,
-    ChevronLeft,
+    Search,
+    Bell,
+    Plus,
+    TrendingUp,
+    TrendingDown,
+    UtensilsCrossed,
+    ShoppingCart,
+    Star,
+    Mail,
+    MessageSquare,
+    Clock,
+    CheckCircle2,
+    AlertCircle,
+    Phone,
     ChevronRight,
 } from 'lucide-react';
 
-const iconMap: { [key: string]: React.ReactNode } = {
-    overview: <BarChart3 size={20} />,
-    users: <Users size={20} />,
-    reservations: <Calendar size={20} />,
-    orders: <UtensilsCrossed size={20} />,
-    categories: <Folder size={20} />,
-    products: <Target size={20} />,
-    analytics: <TrendingUp size={20} />,
-};
+/* ─── tiny SVG area chart ─── */
+function AreaChart({ color = '#22c55e', data }: { color?: string; data: number[] }) {
+    const w = 460;
+    const h = 140;
+    const pad = { top: 10, right: 10, bottom: 28, left: 30 };
+    const innerW = w - pad.left - pad.right;
+    const innerH = h - pad.top - pad.bottom;
+    const max = Math.max(...data);
+    const min = Math.min(...data) * 0.8;
 
-const kpiIcons = {
-    users: <Users size={32} className="opacity-20" />,
-    revenue: <DollarSign size={32} className="opacity-20" />,
-    orders: <UtensilsCrossed size={32} className="opacity-20" />,
-    reservations: <Calendar size={32} className="opacity-20" />,
-};
+    const months = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const step = innerW / (data.length - 1);
 
+    const pts = data.map((v, i) => ({
+        x: pad.left + i * step,
+        y: pad.top + innerH - ((v - min) / (max - min)) * innerH,
+    }));
+
+    const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+    const areaPath = `${linePath} L ${pts[pts.length - 1].x} ${pad.top + innerH} L ${pts[0].x} ${pad.top + innerH} Z`;
+
+    const yTicks = [1, 2, 3, 4, 5];
+
+    return (
+        <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full">
+            <defs>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0.02" />
+                </linearGradient>
+            </defs>
+
+            {/* Y-axis grid lines */}
+            {yTicks.map((t) => {
+                const y = pad.top + innerH - ((t - min) / (max - min)) * innerH;
+                return (
+                    <g key={t}>
+                        <line x1={pad.left} y1={y} x2={pad.left + innerW} y2={y} stroke="#e5e7eb" strokeWidth="1" strokeDasharray="4 4" />
+                        <text x={pad.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">{t}</text>
+                    </g>
+                );
+            })}
+
+            {/* Area fill */}
+            <path d={areaPath} fill="url(#areaGrad)" />
+
+            {/* Line */}
+            <path d={linePath} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+            {/* X-axis labels */}
+            {pts.map((p, i) => (
+                <text key={i} x={p.x} y={h - 6} textAnchor="middle" fontSize="10" fill="#9ca3af">{months[i]}</text>
+            ))}
+
+            {/* Dots */}
+            {pts.map((p, i) => (
+                <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="white" stroke={color} strokeWidth="2" />
+            ))}
+        </svg>
+    );
+}
+
+/* ─── component ─── */
 export default function AdminDashboard({ auth }: any) {
-    const [activeSection, setActiveSection] = useState('overview');
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [activeSection, setActiveSection] = useState('dashboard');
+    const [searchValue, setSearchValue] = useState('');
 
-    const menuItems = [
-        { id: 'overview', label: 'Overview', section: 'dashboard' },
-        { id: 'users', label: 'Users', section: 'management' },
-        { id: 'reservations', label: 'Reservations', section: 'management' },
-        { id: 'orders', label: 'Orders', section: 'management' },
-        { id: 'categories', label: 'Category Resources', section: 'resources' },
-        { id: 'products', label: 'Product Resources', section: 'resources' },
-        { id: 'analytics', label: 'Analytics', section: 'insights' },
+    const navMain = [
+        { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
+        { id: 'contacts', label: 'Contacts', icon: <Users size={18} />, badge: 4 },
+        { id: 'companies', label: 'Companies', icon: <Building2 size={18} /> },
+        { id: 'deals', label: 'Deals', icon: <Handshake size={18} /> },
+        { id: 'inbox', label: 'Inbox', icon: <Inbox size={18} />, badge: 12 },
     ];
+
+    const navWorkspace = [
+        { id: 'tasks', label: 'Tasks', icon: <CheckSquare size={18} /> },
+        { id: 'report', label: 'Report', icon: <BarChart2 size={18} /> },
+        { id: 'calendar', label: 'Calendar', icon: <CalendarDays size={18} /> },
+        { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
+    ];
+
+    const kpiCards = [
+        { label: 'Total Users', value: '2,984', change: '+4.2% today', positive: true, icon: <Users size={20} /> },
+        { label: 'New Orders', value: '186', change: '+12.4% this month', positive: true, icon: <ShoppingCart size={20} /> },
+        { label: 'Active Deals', value: '42', change: '-0.84% this week', positive: false, icon: <Handshake size={20} /> },
+        { label: 'Win Rate', value: '27%', change: '+13.2% today', positive: true, icon: <Star size={20} /> },
+        { label: 'E-mail sent', value: '2,829', change: '+13.2% today', positive: true, icon: <Mail size={20} /> },
+    ];
+
+    const todayTasks = [
+        { id: 1, title: 'Call Sophia James', sub: 'Follow up on proposal', time: '2:00 PM', status: 'upcoming', icon: <Phone size={14} /> },
+        { id: 2, title: 'Email Indigo tech', sub: 'Scheduled demo', time: 'Due 4PM', status: 'due', icon: <Mail size={14} /> },
+        { id: 3, title: 'Preparation for weekly review', sub: 'Gather KPIs', time: 'Today', status: 'today', icon: <CheckSquare size={14} /> },
+        { id: 4, title: 'Contact bookmarked', sub: 'Yesterday', time: 'Done', status: 'done', icon: <MessageSquare size={14} /> },
+    ];
+
+    const recentContacts = [
+        { name: 'Sophia James', company: 'IndigoTech', status: 'Active', deal: '$4,200' },
+        { name: 'Marcus White', company: 'BluePeak Ltd', status: 'Lead', deal: '$1,800' },
+        { name: 'Anna Reeves', company: 'Orion Group', status: 'Won', deal: '$9,500' },
+        { name: 'Daniel Cruz', company: 'NovaBuild', status: 'Inactive', deal: '$650' },
+    ];
+
+    const activities = [
+        { text: 'New reservation from Table 4', time: '2 min ago', icon: <CalendarDays size={14} className="text-blue-500" /> },
+        { text: 'Order #1872 marked as delivered', time: '10 min ago', icon: <CheckCircle2 size={14} className="text-green-500" /> },
+        { text: 'New user registered: Lara Adams', time: '28 min ago', icon: <Users size={14} className="text-purple-500" /> },
+        { text: 'Low stock alert: Truffle Fries', time: '1 hr ago', icon: <AlertCircle size={14} className="text-amber-500" /> },
+        { text: 'Email campaign sent (186 recipients)', time: '2 hr ago', icon: <Mail size={14} className="text-[#E05D36]" /> },
+    ];
+
+    const chartData = [2, 2.2, 2.8, 3.1, 3.0, 4.8, 3.5];
+
+    const taskStatusColor: Record<string, string> = {
+        upcoming: 'text-gray-500',
+        due: 'text-amber-500 font-semibold',
+        today: 'text-green-500 font-semibold',
+        done: 'text-green-600',
+    };
+
+    const taskIconBg: Record<string, string> = {
+        upcoming: 'bg-blue-50 text-blue-400',
+        due: 'bg-amber-50 text-amber-400',
+        today: 'bg-green-50 text-green-500',
+        done: 'bg-green-50 text-green-500',
+    };
+
+    const contactStatusColor: Record<string, string> = {
+        Active: 'bg-green-50 text-green-600',
+        Lead: 'bg-blue-50 text-blue-600',
+        Won: 'bg-emerald-50 text-emerald-600',
+        Inactive: 'bg-gray-100 text-gray-500',
+    };
 
     return (
         <>
-            <Head title="Admin Dashboard - TasteNest">
+            <Head title="Admin Dashboard – TasteNest">
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
             </Head>
 
-            <div className="flex h-screen bg-[#0a0a0a] text-white font-sans overflow-hidden">
-                {/* Background Noise Texture */}
-                <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay pointer-events-none z-0" />
-
-                {/* Sidebar */}
-                <motion.div
-                    initial={{ x: -300 }}
-                    animate={{ x: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className={`${
-                        sidebarOpen ? 'w-72' : 'w-20'
-                    } bg-[#111315] border-r border-white/5 overflow-y-auto transition-all duration-300 flex flex-col relative z-10`}
-                >
-                    {/* Sidebar Background Glow */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#E05D36] rounded-full blur-[150px] opacity-[0.02] pointer-events-none" />
-                    {/* Admin Info */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className={`${sidebarOpen ? 'px-6 py-4' : 'px-3 py-4'} border-b border-white/5 flex items-center justify-between relative z-10`}
-                    >
-                        <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}>
-                            <div className="w-10 h-10 rounded-full bg-[#E05D36]/30 flex items-center justify-center border border-[#E05D36]/50">
-                                <span className="text-sm font-bold font-serif">{auth.user.name.charAt(0)}</span>
-                            </div>
-                            {sidebarOpen && (
-                                <div className="flex flex-col min-w-0">
-                                    <span className="text-xs font-semibold truncate">{auth.user.name}</span>
-                                    <span className="text-xs text-gray-500">Administrator</span>
-                                </div>
-                            )}
+            <div
+                className="flex h-screen overflow-hidden"
+                style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#f9fafb', color: '#111827' }}
+            >
+                {/* ── Sidebar ── */}
+                <aside className="w-52 shrink-0 bg-white border-r border-gray-100 flex flex-col py-4 overflow-y-auto">
+                    {/* Logo */}
+                    <div className="px-5 mb-6 flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-md bg-[#E05D36] flex items-center justify-center">
+                            <UtensilsCrossed size={14} className="text-white" />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className="hidden lg:flex p-1 hover:bg-white/10 rounded-lg transition text-gray-400 hover:text-[#E05D36]"
-                            >
-                                {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-                            </button>
-                            <Link
-                                href="/logout"
-                                method="post"
-                                as="button"
-                                className="p-1 hover:bg-red-500/10 rounded-lg transition text-gray-400 hover:text-red-400"
-                                title="Logout"
-                            >
-                                <LogOut size={20} />
-                            </Link>
-                        </div>
-                    </motion.div>
-
-                    {/* Menu Sections */}
-                    <nav className="flex-1 px-3 py-6 space-y-6 overflow-y-auto relative z-10">
-                        {/* Dashboard Section */}
-                        {sidebarOpen && (
-                            <div>
-                                <p className="px-3 text-[9px] font-bold text-[#E05D36]/70 uppercase tracking-[0.3em] mb-3 font-serif">
-                                    Dashboard
-                                </p>
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            {menuItems
-                                .filter((item) => item.section === 'dashboard')
-                                .map((item, i) => (
-                                    <motion.button
-                                        key={item.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.1 * i }}
-                                        onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all relative overflow-hidden group ${
-                                            activeSection === item.id
-                                                ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/20'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                                        }`}
-                                    >
-                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
-                                        {sidebarOpen && (
-                                            <span className="text-xs font-medium tracking-narrow truncate">{item.label}</span>
-                                        )}
-                                        {activeSection === item.id && (
-                                            <div className="absolute left-0 top-0 h-full w-1 bg-white/50" />
-                                        )}
-                                    </motion.button>
-                                ))}
-                        </div>
-
-                        {/* Management Section */}
-                        {sidebarOpen && (
-                            <div>
-                                <p className="px-3 text-[9px] font-bold text-[#E05D36]/70 uppercase tracking-[0.3em] mb-3 font-serif">
-                                    Management
-                                </p>
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            {menuItems
-                                .filter((item) => item.section === 'management')
-                                .map((item, i) => (
-                                    <motion.button
-                                        key={item.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.15 * i }}
-                                        onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all relative overflow-hidden group ${
-                                            activeSection === item.id
-                                                ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/20'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                                        }`}
-                                    >
-                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
-                                        {sidebarOpen && (
-                                            <span className="text-xs font-medium tracking-narrow truncate">{item.label}</span>
-                                        )}
-                                        {activeSection === item.id && (
-                                            <div className="absolute left-0 top-0 h-full w-1 bg-white/50" />
-                                        )}
-                                    </motion.button>
-                                ))}
-                        </div>
-
-                        {/* Resources Section */}
-                        {sidebarOpen && (
-                            <div>
-                                <p className="px-3 text-[9px] font-bold text-[#E05D36]/70 uppercase tracking-[0.3em] mb-3 font-serif">
-                                    Resources
-                                </p>
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            {menuItems
-                                .filter((item) => item.section === 'resources')
-                                .map((item, i) => (
-                                    <motion.button
-                                        key={item.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.2 * i }}
-                                        onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all relative overflow-hidden group ${
-                                            activeSection === item.id
-                                                ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/20'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                                        }`}
-                                    >
-                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
-                                        {sidebarOpen && (
-                                            <span className="text-xs font-medium tracking-narrow truncate">{item.label}</span>
-                                        )}
-                                        {activeSection === item.id && (
-                                            <div className="absolute left-0 top-0 h-full w-1 bg-white/50" />
-                                        )}
-                                    </motion.button>
-                                ))}
-                        </div>
-
-                        {/* Insights Section */}
-                        {sidebarOpen && (
-                            <div>
-                                <p className="px-3 text-[9px] font-bold text-[#E05D36]/70 uppercase tracking-[0.3em] mb-3 font-serif">
-                                    Insights
-                                </p>
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            {menuItems
-                                .filter((item) => item.section === 'insights')
-                                .map((item, i) => (
-                                    <motion.button
-                                        key={item.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.25 * i }}
-                                        onClick={() => setActiveSection(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm transition-all relative overflow-hidden group ${
-                                            activeSection === item.id
-                                                ? 'bg-[#E05D36] text-white shadow-lg shadow-[#E05D36]/20'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                                        }`}
-                                    >
-                                        <span className="flex-shrink-0">{iconMap[item.id]}</span>
-                                        {sidebarOpen && (
-                                            <span className="text-xs font-medium tracking-narrow truncate">{item.label}</span>
-                                        )}
-                                        {activeSection === item.id && (
-                                            <div className="absolute left-0 top-0 h-full w-1 bg-white/50" />
-                                        )}
-                                    </motion.button>
-                                ))}
-                        </div>
-                    </nav>
-                </motion.div>
-
-                {/* Main Content */}
-                <div className="flex-1 flex flex-col overflow-hidden relative z-10">
-                    {/* Top Bar */}
-                    <div className="h-20 bg-[#111315] border-b border-white/5 flex items-center justify-between px-8 relative">
-                        {/* Top Bar Background Glow */}
-                        <div className="absolute top-0 right-0 w-96 h-full bg-[#E05D36] rounded-full blur-[100px] opacity-[0.02] pointer-events-none" />
-
-                        <div className="relative z-10">
-                            <h1 className="text-2xl font-bold text-white font-serif tracking-tight">
-                                {menuItems.find((item) => item.id === activeSection)?.label}
-                            </h1>
-                            <p className="text-[10px] text-[#E05D36] tracking-widest uppercase mt-1">Dashboard</p>
-                        </div>
-                        <div className="flex items-center gap-4 relative z-10">
-                            <div className="text-right hidden md:block">
-                                <p className="text-xs text-gray-500">Welcome back</p>
-                                <p className="text-sm font-semibold text-white">{auth.user.name}</p>
-                            </div>
-                        </div>
+                        <span className="text-sm font-bold text-gray-800 tracking-tight">TasteNest</span>
                     </div>
 
-                    {/* Content Area */}
-                    <div className="flex-1 overflow-y-auto">
-                        <div className="p-8">
-                            {/* Overview Section */}
-                            {activeSection === 'overview' && (
+                    {/* Main nav */}
+                    <nav className="flex-1 px-3">
+                        <div className="space-y-0.5">
+                            {navMain.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveSection(item.id)}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all group relative ${activeSection === item.id
+                                            ? 'bg-gray-100 text-gray-900 font-medium'
+                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className={activeSection === item.id ? 'text-gray-700' : 'text-gray-400 group-hover:text-gray-600'}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="flex-1 text-left">{item.label}</span>
+                                    {item.badge && (
+                                        <span className="ml-auto bg-gray-200 text-gray-700 text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                                            {item.badge}
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Workspace section */}
+                        <p className="mt-5 mb-1.5 px-3 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Workspace</p>
+                        <div className="space-y-0.5">
+                            {navWorkspace.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveSection(item.id)}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all group ${activeSection === item.id
+                                            ? 'bg-gray-100 text-gray-900 font-medium'
+                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className={activeSection === item.id ? 'text-gray-700' : 'text-gray-400 group-hover:text-gray-600'}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="flex-1 text-left">{item.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </nav>
+
+                    {/* Bottom links */}
+                    <div className="px-3 mt-4 border-t border-gray-100 pt-4 space-y-0.5">
+                        <a
+                            href="#"
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all"
+                        >
+                            <HelpCircle size={18} className="text-gray-400" />
+                            Help
+                        </a>
+                        <Link
+                            href="/logout"
+                            method="post"
+                            as="button"
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all"
+                        >
+                            <LogOut size={18} className="text-gray-400" />
+                            Logout
+                        </Link>
+                    </div>
+                </aside>
+
+                {/* ── Main ── */}
+                <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                    {/* Top bar */}
+                    <header className="h-14 shrink-0 bg-white border-b border-gray-100 flex items-center px-6 gap-4">
+                        {/* Search */}
+                        <div className="flex-1 max-w-xs relative">
+                            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search contacts, leads..."
+                                value={searchValue}
+                                onChange={(e) => setSearchValue(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 placeholder:text-gray-400"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 ml-auto">
+                            {/* Bell */}
+                            <button className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-50 transition">
+                                <Bell size={18} />
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E05D36] rounded-full" />
+                            </button>
+
+                            {/* Avatar */}
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-full bg-[#E05D36] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                    {auth?.user?.name?.charAt(0) ?? 'A'}
+                                </div>
+                                <span className="text-sm font-medium text-gray-700 hidden md:block">
+                                    {auth?.user?.name ?? 'Admin'}
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Scrollable content */}
+                    <main className="flex-1 overflow-y-auto p-6">
+                        <AnimatePresence mode="wait">
+                            {activeSection === 'dashboard' && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
+                                    key="dashboard"
+                                    initial={{ opacity: 0, y: 12 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.4 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.25 }}
                                     className="space-y-6"
                                 >
-                                    {/* KPI Cards */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {[
-                                            { label: 'Total Users', value: '2,547', change: '+12%', key: 'users', color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30' },
-                                            { label: 'Total Revenue', value: '$24,580', change: '+8%', key: 'revenue', color: 'from-green-500/20 to-green-600/10 border-green-500/30' },
-                                            { label: 'Pending Orders', value: '34', change: 'Awaiting', key: 'orders', color: 'from-[#E05D36]/20 to-[#E05D36]/10 border-[#E05D36]/30' },
-                                            { label: 'Reservations', value: '18', change: 'Confirmed', key: 'reservations', color: 'from-purple-500/20 to-purple-600/10 border-purple-500/30' },
-                                        ].map((card, i) => (
+                                    {/* Page header */}
+                                    <div>
+                                        <h1 className="text-xl font-bold text-gray-900">Dashboard overview</h1>
+                                        <p className="text-sm text-gray-500 mt-0.5">Track pipeline, task, and recent activities</p>
+                                    </div>
+
+                                    {/* KPI cards */}
+                                    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+                                        {kpiCards.map((card, i) => (
                                             <motion.div
                                                 key={i}
-                                                initial={{ opacity: 0, y: 20 }}
+                                                initial={{ opacity: 0, y: 16 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: i * 0.1 }}
-                                                className={`bg-gradient-to-br ${card.color} border rounded-sm p-6 relative overflow-hidden group`}
+                                                transition={{ delay: i * 0.06 }}
+                                                className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow"
                                             >
-                                                {/* Card Hover Effect */}
-                                                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                                <div className="relative z-10 flex items-start justify-between mb-4">
-                                                    <div>
-                                                        <p className="text-gray-400 text-xs mb-2 tracking-widest uppercase font-sans">{card.label}</p>
-                                                        <div className="text-3xl font-bold text-white font-serif">{card.value}</div>
-                                                    </div>
-                                                    <span className="opacity-20 transition-opacity group-hover:opacity-40">{kpiIcons[card.key as keyof typeof kpiIcons]}</span>
+                                                <p className="text-xs text-gray-500 mb-2">{card.label}</p>
+                                                <p className="text-2xl font-bold text-gray-900 mb-2">{card.value}</p>
+                                                <div className={`flex items-center gap-1 text-xs ${card.positive ? 'text-green-500' : 'text-red-500'}`}>
+                                                    {card.positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                                    <span>{card.change}</span>
                                                 </div>
-                                                <p className="text-xs text-gray-400 relative z-10">{card.change} from last month</p>
                                             </motion.div>
                                         ))}
                                     </div>
 
-                                    {/* Recent Activity */}
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {/* Middle row: Chart + Today's Tasks */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                                        {/* Pipeline chart */}
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.35 }}
+                                            className="lg:col-span-3 bg-white rounded-xl border border-gray-100 p-5"
+                                        >
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div>
+                                                    <h2 className="text-sm font-semibold text-gray-800">Pipeline performance</h2>
+                                                    <p className="text-xs text-gray-400 mt-0.5">Leads through stage over selected period</p>
+                                                </div>
+                                                <button className="flex items-center gap-1.5 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition">
+                                                    Export
+                                                </button>
+                                            </div>
+
+                                            {/* Legend */}
+                                            <div className="flex items-center gap-4 mb-3">
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="w-3 h-2 rounded-full bg-blue-400 inline-block" />
+                                                    <span className="text-xs text-gray-500">Leads</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="w-3 h-2 rounded-full bg-green-400 inline-block" />
+                                                    <span className="text-xs text-gray-500">Won</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="h-36">
+                                                <AreaChart color="#22c55e" data={chartData} />
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Today's tasks */}
                                         <motion.div
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             transition={{ delay: 0.4 }}
-                                            className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6"
+                                            className="lg:col-span-2 bg-white rounded-xl border border-gray-100 p-5"
                                         >
-                                            <h3 className="text-lg font-bold text-white mb-4 font-serif">Recent Orders</h3>
-                                            <div className="space-y-3">
-                                                {[1, 2, 3].map((i) => (
-                                                    <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-sm border border-white/5 hover:border-[#E05D36]/30 transition">
-                                                        <span className="text-sm text-gray-400">Order #{12350 + i}</span>
-                                                        <span className="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-sm">Delivered</span>
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h2 className="text-sm font-semibold text-gray-800">Today's task</h2>
+                                                <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#E05D36] transition">
+                                                    <Plus size={13} /> Add
+                                                </button>
+                                            </div>
+
+                                            <div className="space-y-0">
+                                                {todayTasks.map((task, i) => (
+                                                    <div
+                                                        key={task.id}
+                                                        className={`flex items-start gap-3 py-3 ${i < todayTasks.length - 1 ? 'border-b border-gray-50' : ''}`}
+                                                    >
+                                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${taskIconBg[task.status]}`}>
+                                                            {task.icon}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-medium text-gray-800 truncate">{task.title}</p>
+                                                            <p className="text-xs text-gray-400 truncate">{task.sub}</p>
+                                                        </div>
+                                                        <span className={`text-xs shrink-0 ml-2 mt-0.5 ${taskStatusColor[task.status]}`}>
+                                                            {task.time}
+                                                        </span>
                                                     </div>
                                                 ))}
                                             </div>
                                         </motion.div>
+                                    </div>
 
+                                    {/* Bottom row: Recent contacts + Activity feed */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                                        {/* Recent contacts */}
                                         <motion.div
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             transition={{ delay: 0.5 }}
-                                            className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6"
+                                            className="lg:col-span-3 bg-white rounded-xl border border-gray-100 p-5"
                                         >
-                                            <h3 className="text-lg font-bold text-white mb-4 font-serif">Quick Actions</h3>
-                                            <div className="space-y-3">
-                                                <button className="w-full bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                                    Create Menu Item
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h2 className="text-sm font-semibold text-gray-800">Recent contact</h2>
+                                                <button className="text-xs text-[#E05D36] hover:underline transition">View all</button>
+                                            </div>
+
+                                            <table className="w-full">
+                                                <thead>
+                                                    <tr className="text-left">
+                                                        <th className="pb-2 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Name</th>
+                                                        <th className="pb-2 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Company</th>
+                                                        <th className="pb-2 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                                                        <th className="pb-2 text-[11px] font-medium text-gray-400 uppercase tracking-wider text-right">Deal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-gray-50">
+                                                    {recentContacts.map((c, i) => (
+                                                        <motion.tr
+                                                            key={i}
+                                                            initial={{ opacity: 0 }}
+                                                            animate={{ opacity: 1 }}
+                                                            transition={{ delay: 0.55 + i * 0.05 }}
+                                                            className="group hover:bg-gray-50/60 transition-colors"
+                                                        >
+                                                            <td className="py-3 pr-4">
+                                                                <div className="flex items-center gap-2.5">
+                                                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center text-xs font-semibold text-[#E05D36] shrink-0">
+                                                                        {c.name.charAt(0)}
+                                                                    </div>
+                                                                    <span className="text-sm font-medium text-gray-800">{c.name}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="py-3 pr-4 text-sm text-gray-500">{c.company}</td>
+                                                            <td className="py-3 pr-4">
+                                                                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${contactStatusColor[c.status]}`}>
+                                                                    {c.status}
+                                                                </span>
+                                                            </td>
+                                                            <td className="py-3 text-right text-sm font-semibold text-gray-800">{c.deal}</td>
+                                                        </motion.tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </motion.div>
+
+                                        {/* Activity feed */}
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.55 }}
+                                            className="lg:col-span-2 bg-white rounded-xl border border-gray-100 p-5"
+                                        >
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div>
+                                                    <h2 className="text-sm font-semibold text-gray-800">Activity feed</h2>
+                                                    <p className="text-xs text-gray-400 mt-0.5">Latest event from your workplace</p>
+                                                </div>
+                                                <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#E05D36] transition">
+                                                    <Plus size={13} /> Add
                                                 </button>
-                                                <button className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                                    View Reports
-                                                </button>
-                                                <button className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                                    Settings
-                                                </button>
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                {activities.map((a, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className={`flex items-start gap-3 py-2.5 ${i < activities.length - 1 ? 'border-b border-gray-50' : ''}`}
+                                                    >
+                                                        <div className="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center shrink-0 mt-0.5">
+                                                            {a.icon}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-xs text-gray-700 leading-snug">{a.text}</p>
+                                                            <div className="flex items-center gap-1 mt-0.5">
+                                                                <Clock size={10} className="text-gray-300" />
+                                                                <span className="text-[10px] text-gray-400">{a.time}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </motion.div>
                                     </div>
                                 </motion.div>
                             )}
 
-                            {/* Users Management */}
-                            {activeSection === 'users' && (
+                            {/* ── Contacts ── */}
+                            {activeSection === 'contacts' && (
                                 <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="space-y-6"
+                                    key="contacts"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
                                 >
-                                    <div className="flex justify-between items-center">
-                                        <p className="text-gray-400 text-sm">Managing <span className="font-bold text-white">5</span> active users</p>
-                                        <button className="bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                            + Add User
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-xl font-bold text-gray-900">Contacts</h1>
+                                            <p className="text-sm text-gray-500 mt-0.5">Manage your customer contacts</p>
+                                        </div>
+                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <Plus size={16} /> Add Contact
                                         </button>
                                     </div>
-                                    <div className="space-y-4">
-                                        {[1, 2, 3, 4, 5].map((i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                transition={{ delay: i * 0.1 }}
-                                                className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6 flex justify-between items-center hover:border-[#E05D36]/30 transition"
-                                            >
-                                                <div>
-                                                    <p className="text-white font-semibold">User #{1000 + i}</p>
-                                                    <p className="text-gray-400 text-sm">user{i}@example.com</p>
-                                                </div>
-                                                <div className="flex gap-3">
-                                                    <button className="text-xs bg-blue-500/20 text-blue-400 px-3 py-2 rounded-sm transition hover:bg-blue-500/30">
-                                                        Edit
-                                                    </button>
-                                                    <button className="text-xs bg-red-500/20 text-red-400 px-3 py-2 rounded-sm transition hover:bg-red-500/30">
-                                                        Deactivate
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
 
-                            {/* Category Resources */}
-                            {activeSection === 'categories' && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <p className="text-gray-400 text-sm">Managing <span className="font-bold text-white">4</span> menu categories</p>
-                                        <button className="bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                            + Add Category
-                                        </button>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {['Burgers', 'Pasta', 'Sides', 'Beverages'].map((cat, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: i * 0.1 }}
-                                                className="bg-gradient-to-br from-[#111]/90 to-[#0a0a0a] border border-white/5 rounded-sm p-6 hover:border-[#E05D36]/30 transition group"
-                                            >
-                                                <div className="flex items-start justify-between mb-4">
-                                                    <h3 className="text-lg font-bold text-white font-serif">{cat}</h3>
-                                                    <Folder size={32} className="opacity-30 group-hover:opacity-50 transition" />
+                                    <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                                        {[...Array(6)].map((_, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center text-sm font-semibold text-[#E05D36] shrink-0">
+                                                    {String.fromCharCode(65 + i)}
                                                 </div>
-                                                <p className="text-gray-400 text-sm mb-6">{8 - i * 2} items in this category</p>
-                                                <div className="flex gap-2">
-                                                    <button className="flex-1 text-xs bg-blue-500/20 text-blue-400 px-3 py-2 rounded-sm transition hover:bg-blue-500/30">
-                                                        Edit
-                                                    </button>
-                                                    <button className="flex-1 text-xs bg-red-500/20 text-red-400 px-3 py-2 rounded-sm transition hover:bg-red-500/30">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Product Resources */}
-                            {activeSection === 'products' && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <p className="text-gray-400 text-sm">Managing <span className="font-bold text-white">12</span> menu items</p>
-                                        <button className="bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-3 rounded-sm transition font-medium text-xs tracking-widest uppercase">
-                                            + Add Product
-                                        </button>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {[
-                                            { name: 'Artisan Burger Board', category: 'Burgers', price: '$18.00', stock: 45 },
-                                            { name: 'Truffle Luxe Burger', category: 'Burgers', price: '$24.00', stock: 12 },
-                                            { name: 'Beef Pasta', category: 'Pasta', price: '$18.50', stock: 28 },
-                                            { name: 'Crispy Fries', category: 'Sides', price: '$6.00', stock: 120 },
-                                            { name: 'Classic Milkshake', category: 'Beverages', price: '$5.50', stock: 80 },
-                                        ].map((product, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                transition={{ delay: i * 0.08 }}
-                                                className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6 flex justify-between items-center hover:border-[#E05D36]/30 transition"
-                                            >
                                                 <div className="flex-1">
-                                                    <p className="text-white font-semibold">{product.name}</p>
-                                                    <div className="flex items-center gap-4 mt-2">
-                                                        <span className="text-xs text-gray-500">{product.category}</span>
-                                                        <span className="text-xs text-[#E05D36] font-bold">{product.price}</span>
-                                                        <span className={`text-xs px-2 py-1 rounded-sm ${
-                                                            product.stock > 30
-                                                                ? 'bg-green-500/20 text-green-400'
-                                                                : product.stock > 10
-                                                                ? 'bg-yellow-500/20 text-yellow-400'
-                                                                : 'bg-red-500/20 text-red-400'
-                                                        }`}>
-                                                            Stock: {product.stock}
-                                                        </span>
+                                                    <p className="text-sm font-medium text-gray-800">Contact User {i + 1}</p>
+                                                    <p className="text-xs text-gray-400">user{i + 1}@example.com</p>
+                                                </div>
+                                                <span className="text-xs bg-green-50 text-green-600 px-2.5 py-1 rounded-full font-medium">Active</span>
+                                                <button className="text-gray-400 hover:text-gray-600 transition">
+                                                    <ChevronRight size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Deals ── */}
+                            {activeSection === 'deals' && (
+                                <motion.div
+                                    key="deals"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-xl font-bold text-gray-900">Deals</h1>
+                                            <p className="text-sm text-gray-500 mt-0.5">Track active and closed deals</p>
+                                        </div>
+                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <Plus size={16} /> New Deal
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {[
+                                            { stage: 'Leads', items: ['IndigoTech Proposal', 'NovaBuild Pitch'], color: 'bg-blue-50 border-blue-100' },
+                                            { stage: 'Negotiation', items: ['Orion Group Contract', 'BluePeak Ltd'], color: 'bg-amber-50 border-amber-100' },
+                                            { stage: 'Won', items: ['Apex Solutions – $9.5k', 'ZenCore – $4.2k'], color: 'bg-green-50 border-green-100' },
+                                        ].map((col, ci) => (
+                                            <div key={ci} className={`rounded-xl border p-4 ${col.color} space-y-3`}>
+                                                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">{col.stage}</p>
+                                                {col.items.map((item, ii) => (
+                                                    <div key={ii} className="bg-white rounded-lg border border-white p-3 shadow-sm">
+                                                        <p className="text-sm font-medium text-gray-800">{item}</p>
+                                                        <p className="text-xs text-gray-400 mt-1">Updated 2h ago</p>
                                                     </div>
-                                                </div>
-                                                <div className="flex gap-3">
-                                                    <button className="text-xs bg-blue-500/20 text-blue-400 px-3 py-2 rounded-sm transition hover:bg-blue-500/30">
-                                                        Edit
-                                                    </button>
-                                                    <button className="text-xs bg-red-500/20 text-red-400 px-3 py-2 rounded-sm transition hover:bg-red-500/30">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </motion.div>
+                                                ))}
+                                            </div>
                                         ))}
                                     </div>
                                 </motion.div>
                             )}
 
-                            {/* Reservations Section */}
-                            {activeSection === 'reservations' && (
+                            {/* ── Orders / Inbox ── */}
+                            {(activeSection === 'inbox' || activeSection === 'orders') && (
                                 <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="space-y-6"
+                                    key="inbox"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
                                 >
-                                    <p className="text-gray-400 text-sm"><span className="font-bold text-white">6</span> reservations today</p>
-                                    <div className="space-y-4">
-                                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                transition={{ delay: i * 0.08 }}
-                                                className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6 flex justify-between items-center hover:border-[#E05D36]/30 transition"
-                                            >
-                                                <div>
-                                                    <p className="text-white font-semibold">Reservation #{i}</p>
-                                                    <p className="text-gray-400 text-sm">March {15 + i}, 2024 • Party of {3 + i}</p>
-                                                </div>
-                                                <span className="bg-green-500/20 text-green-400 px-4 py-2 rounded-sm text-xs font-medium">
-                                                    Confirmed
-                                                </span>
-                                            </motion.div>
-                                        ))}
+                                    <div>
+                                        <h1 className="text-xl font-bold text-gray-900">Inbox</h1>
+                                        <p className="text-sm text-gray-500 mt-0.5">12 unread messages</p>
                                     </div>
-                                </motion.div>
-                            )}
-
-                            {/* Orders Section */}
-                            {activeSection === 'orders' && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="space-y-6"
-                                >
-                                    <p className="text-gray-400 text-sm"><span className="font-bold text-white">34</span> orders pending</p>
-                                    <div className="space-y-4">
-                                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                transition={{ delay: i * 0.08 }}
-                                                className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6 flex justify-between items-center hover:border-[#E05D36]/30 transition"
-                                            >
-                                                <div>
-                                                    <p className="text-white font-semibold">Order #{12340 + i}</p>
-                                                    <p className="text-gray-400 text-sm">Items: {2 + i} • Total: ${23 + i * 2}</p>
+                                    <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div key={i} className="flex items-start gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                                <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <Mail size={15} className="text-gray-400" />
                                                 </div>
-                                                <select className="bg-[#1a2322]/90 text-white text-xs px-3 py-2 rounded-sm border border-white/5 hover:border-[#E05D36]/50 transition">
-                                                    <option>Pending</option>
-                                                    <option>Preparing</option>
-                                                    <option>Ready</option>
-                                                    <option>Delivered</option>
-                                                </select>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Analytics Section */}
-                            {activeSection === 'analytics' && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-                                >
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.2 }}
-                                        className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6"
-                                    >
-                                        <h3 className="text-lg font-bold text-white mb-6 font-serif">Peak Hours</h3>
-                                        {[
-                                            { time: '11:00 AM - 1:00 PM', percentage: 85 },
-                                            { time: '6:00 PM - 9:00 PM', percentage: 95 },
-                                            { time: '12:00 AM - 2:00 AM', percentage: 30 },
-                                        ].map((hour, i) => (
-                                            <div key={i} className="mb-6">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-sm text-gray-400">{hour.time}</span>
-                                                    <span className="text-sm font-semibold text-white">{hour.percentage}%</span>
-                                                </div>
-                                                <div className="w-full bg-white/5 rounded-full h-2">
-                                                    <motion.div
-                                                        initial={{ width: 0 }}
-                                                        animate={{ width: `${hour.percentage}%` }}
-                                                        transition={{ duration: 1, delay: i * 0.2 }}
-                                                        className="bg-gradient-to-r from-[#E05D36] to-[#FF7A5C] h-2 rounded-full"
-                                                    />
+                                                <div className="flex-1">
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-sm font-semibold text-gray-800">New inquiry #{1001 + i}</p>
+                                                        <span className="text-xs text-gray-400">2:0{i}PM</span>
+                                                    </div>
+                                                    <p className="text-xs text-gray-500 mt-0.5">Hi, I'd like to make a reservation for our team...</p>
                                                 </div>
                                             </div>
                                         ))}
-                                    </motion.div>
-
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.3 }}
-                                        className="bg-[#111]/90 backdrop-blur-md border border-white/5 rounded-sm p-6"
-                                    >
-                                        <h3 className="text-lg font-bold text-white mb-6 font-serif">Top Selling Items</h3>
-                                        {[
-                                            { name: 'Artisan Burger', count: 542 },
-                                            { name: 'Truffle Fries', count: 438 },
-                                            { name: 'Beef Pasta', count: 356 },
-                                        ].map((item, i) => (
-                                            <div key={i} className="flex justify-between items-center py-3 border-b border-white/5 last:border-0">
-                                                <span className="text-gray-400">{item.name}</span>
-                                                <span className="text-[#E05D36] font-bold">{item.count} sold</span>
-                                            </div>
-                                        ))}
-                                    </motion.div>
+                                    </div>
                                 </motion.div>
                             )}
-                        </div>
-                    </div>
+
+                            {/* ── Tasks ── */}
+                            {activeSection === 'tasks' && (
+                                <motion.div
+                                    key="tasks"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-xl font-bold text-gray-900">Tasks</h1>
+                                            <p className="text-sm text-gray-500 mt-0.5">Your workspace tasks</p>
+                                        </div>
+                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <Plus size={16} /> New Task
+                                        </button>
+                                    </div>
+                                    <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                                        {todayTasks.map((t) => (
+                                            <div key={t.id} className="flex items-start gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${taskIconBg[t.status]}`}>
+                                                    {t.icon}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-gray-800">{t.title}</p>
+                                                    <p className="text-xs text-gray-400">{t.sub}</p>
+                                                </div>
+                                                <span className={`text-xs shrink-0 ${taskStatusColor[t.status]}`}>{t.time}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Report / Analytics ── */}
+                            {activeSection === 'report' && (
+                                <motion.div
+                                    key="report"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div>
+                                        <h1 className="text-xl font-bold text-gray-900">Report</h1>
+                                        <p className="text-sm text-gray-500 mt-0.5">Performance overview</p>
+                                    </div>
+                                    <div className="bg-white rounded-xl border border-gray-100 p-6">
+                                        <h2 className="text-sm font-semibold text-gray-800 mb-4">Sales trend</h2>
+                                        <div className="h-48">
+                                            <AreaChart color="#E05D36" data={[1.2, 1.8, 2.4, 1.9, 3.2, 4.0, 3.6]} />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {[
+                                            { label: 'Peak Hours', value: '6–9 PM', sub: '95% capacity', color: 'text-green-500' },
+                                            { label: 'Top Item', value: 'Artisan Burger', sub: '542 sold this month', color: 'text-[#E05D36]' },
+                                            { label: 'Avg. Order Value', value: '$24.80', sub: '+$3.20 vs last month', color: 'text-blue-500' },
+                                        ].map((s, i) => (
+                                            <div key={i} className="bg-white rounded-xl border border-gray-100 p-5">
+                                                <p className="text-xs text-gray-400 mb-1">{s.label}</p>
+                                                <p className={`text-lg font-bold ${s.color} mb-1`}>{s.value}</p>
+                                                <p className="text-xs text-gray-500">{s.sub}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Calendar / Companies / Settings ── */}
+                            {['calendar', 'companies', 'settings'].includes(activeSection) && (
+                                <motion.div
+                                    key={activeSection}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="flex items-center justify-center h-64"
+                                >
+                                    <div className="text-center">
+                                        <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                                            {activeSection === 'calendar' && <CalendarDays size={24} className="text-gray-400" />}
+                                            {activeSection === 'companies' && <Building2 size={24} className="text-gray-400" />}
+                                            {activeSection === 'settings' && <Settings size={24} className="text-gray-400" />}
+                                        </div>
+                                        <p className="text-gray-800 font-semibold capitalize">{activeSection}</p>
+                                        <p className="text-sm text-gray-400 mt-1">Coming soon</p>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </main>
                 </div>
             </div>
         </>
