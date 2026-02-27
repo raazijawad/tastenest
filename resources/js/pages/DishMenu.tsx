@@ -238,7 +238,7 @@ export default function DishMenu() {
                                     className="mb-12 relative"
                                 >
                                     <div className="flex items-center gap-4 mb-8">
-                                        <h2 className="font-serif text-4xl lg:text-5xl text-white uppercase tracking-tight">
+                                        <h2 className="font-serif text-3xl text-white uppercase tracking-tight">
                                             {category}
                                         </h2>
                                         <div className="flex-grow h-px bg-gradient-to-r from-[#E05D36] to-transparent" />
