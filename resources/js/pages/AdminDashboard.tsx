@@ -1248,12 +1248,7 @@ export default function AdminDashboard({ auth }: any) {
                                                         <Package size={16} className="text-[#E05D36]" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-3">
-                                                            <p className="text-sm font-medium text-gray-800 truncate">{product.name}</p>
-                                                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${product.status === 'Available' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                                {product.status}
-                                                            </span>
-                                                        </div>
+                                                        <p className="text-sm font-medium text-gray-800 truncate">{product.name}</p>
                                                     </div>
                                                     <div className="w-32 shrink-0">
                                                         <p className="text-sm text-gray-600">{product.category}</p>
