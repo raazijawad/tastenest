@@ -91,6 +91,7 @@ export default function AdminDashboard({ auth }: any) {
     const [showAddCategory, setShowAddCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
     const [newCategoryDescription, setNewCategoryDescription] = useState('');
+    const [categories, setCategories] = useState<any[]>([]);
 
     const navMain = [
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
@@ -426,11 +427,18 @@ export default function AdminDashboard({ auth }: any) {
                                                             type="submit"
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                // Handle category submission here
-                                                                console.log('New category:', newCategoryName, newCategoryDescription);
-                                                                setNewCategoryName('');
-                                                                setNewCategoryDescription('');
-                                                                setShowAddCategory(false);
+                                                                if (newCategoryName.trim()) {
+                                                                    setCategories([...categories, {
+                                                                        id: Date.now(),
+                                                                        name: newCategoryName,
+                                                                        description: newCategoryDescription,
+                                                                        products: 0,
+                                                                        status: 'Active'
+                                                                    }]);
+                                                                    setNewCategoryName('');
+                                                                    setNewCategoryDescription('');
+                                                                    setShowAddCategory(false);
+                                                                }
                                                             }}
                                                             className="flex-1 px-4 py-2.5 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition"
                                                         >
@@ -443,18 +451,30 @@ export default function AdminDashboard({ auth }: any) {
                                     )}
 
                                     <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-                                        {[...Array(5)].map((_, i) => (
-                                            <div key={i} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors">
-                                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
-                                                    <Tags size={16} className="text-[#E05D36]" />
+                                        {categories.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-12 px-4">
+                                                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center mb-4">
+                                                    <Tags size={24} className="text-gray-400" />
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="text-sm font-medium text-gray-800">Category {i + 1}</p>
-                                                    <p className="text-xs text-gray-400">{10 + i * 5} products</p>
-                                                </div>
-                                                <span className="text-xs bg-green-50 text-green-600 px-2.5 py-1 rounded-full font-medium">Active</span>
+                                                <p className="text-gray-800 font-semibold">No categories yet</p>
+                                                <p className="text-sm text-gray-400 mt-1">Click "Add Category" to create your first category</p>
                                             </div>
-                                        ))}
+                                        ) : (
+                                            categories.map((category) => (
+                                                <div key={category.id} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
+                                                        <Tags size={16} className="text-[#E05D36]" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="text-sm font-medium text-gray-800">{category.name}</p>
+                                                        <p className="text-xs text-gray-400">{category.description || 'No description'}</p>
+                                                    </div>
+                                                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${category.status === 'Active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                        {category.status}
+                                                    </span>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
