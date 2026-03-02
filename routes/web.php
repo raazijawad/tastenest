@@ -21,6 +21,10 @@ Route::get('/menu', function () {
     return Inertia::render('DishMenu');
 })->name('menu');
 
+Route::get('/product/{id}', function ($id) {
+    return Inertia::render('ProductShow', ['id' => $id]);
+})->name('product.show');
+
 // Protected Routes (Require Authentication)
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {

@@ -287,10 +287,10 @@ export default function DishMenu() {
                                                     <span className="font-sans text-xs text-gray-500 line-through">{dish.oldPrice}</span>
                                                 </div>
 
-                                                <button className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-6 py-2 w-fit text-[10px] tracking-[0.2em] font-semibold uppercase transition-colors">
-                                                    <span className="relative z-10">Order Now</span>
+                                                <Link href={`/product/${dish.id}`} className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-6 py-2 w-fit text-[10px] tracking-[0.2em] font-semibold uppercase transition-colors block text-center">
+                                                    <span className="relative z-10">View Details</span>
                                                     <div className="absolute inset-0 bg-[#C8502D] scale-x-0 origin-left group-hover/btn:scale-x-100 transition-transform duration-300" />
-                                                </button>
+                                                </Link>
                                             </div>
                                         </motion.div>
                                     ))}
