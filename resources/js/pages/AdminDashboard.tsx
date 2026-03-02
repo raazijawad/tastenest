@@ -564,7 +564,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 initial={{ scale: 0.95, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 exit={{ scale: 0.95, opacity: 0 }}
-                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6"
+                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex items-center justify-between mb-6">
@@ -578,8 +578,8 @@ export default function AdminDashboard({ auth }: any) {
                                                 </div>
 
                                                 <form>
-                                                    <div className="grid grid-cols-3 gap-6">
-                                                        <div className="col-span-2 space-y-4">
+                                                    <div className="grid grid-cols-3 gap-8">
+                                                        <div className="col-span-2 space-y-5">
                                                             <div className="grid grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -626,7 +626,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
 
                                                             {/* Size Options */}
-                                                            <div>
+                                                            <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
                                                                     <label className="block text-sm font-medium text-gray-700">
                                                                         Size Options
@@ -639,7 +639,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         <Plus size={14} /> Add Size
                                                                     </button>
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-2">
+                                                                <div className="space-y-2">
                                                                     {sizeOptions.map((option, index) => (
                                                                         <div key={index} className="flex gap-2">
                                                                             <select
@@ -666,7 +666,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     setSizeOptions(newOptions);
                                                                                 }}
                                                                                 placeholder="Price"
-                                                                                className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
                                                                             />
                                                                             <button
                                                                                 type="button"
@@ -687,7 +687,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
 
                                                             {/* Add-ons */}
-                                                            <div>
+                                                            <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
                                                                     <label className="block text-sm font-medium text-gray-700">
                                                                         Add-ons / Extras
@@ -724,7 +724,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     setAddons(newAddons);
                                                                                 }}
                                                                                 placeholder="Price"
-                                                                                className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
                                                                             />
                                                                             <button
                                                                                 type="button"
@@ -745,7 +745,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
                                                         </div>
 
-                                                        <div className="col-span-1 space-y-4">
+                                                        <div className="col-span-1 space-y-5">
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                                                     Base Price ($)
@@ -766,9 +766,9 @@ export default function AdminDashboard({ auth }: any) {
                                                             <div className="flex flex-col">
                                                                 {imagePreview ? (
                                                                     <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 mb-3">
-                                                                        <img 
-                                                                            src={imagePreview} 
-                                                                            alt="Preview" 
+                                                                        <img
+                                                                            src={imagePreview}
+                                                                            alt="Preview"
                                                                             className="w-full h-full object-cover"
                                                                         />
                                                                     </div>
@@ -892,7 +892,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 initial={{ scale: 0.95, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 exit={{ scale: 0.95, opacity: 0 }}
-                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6"
+                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex items-center justify-between mb-6">
@@ -906,8 +906,8 @@ export default function AdminDashboard({ auth }: any) {
                                                 </div>
 
                                                 <form>
-                                                    <div className="grid grid-cols-3 gap-6">
-                                                        <div className="col-span-2 space-y-4">
+                                                    <div className="grid grid-cols-3 gap-8">
+                                                        <div className="col-span-2 space-y-5">
                                                             <div className="grid grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -954,7 +954,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
 
                                                             {/* Size Options */}
-                                                            <div>
+                                                            <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
                                                                     <label className="block text-sm font-medium text-gray-700">
                                                                         Size Options
@@ -967,7 +967,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         <Plus size={14} /> Add Size
                                                                     </button>
                                                                 </div>
-                                                                <div className="grid grid-cols-2 gap-2">
+                                                                <div className="space-y-2">
                                                                     {editSizeOptions.map((option, index) => (
                                                                         <div key={index} className="flex gap-2">
                                                                             <select
@@ -1015,7 +1015,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
 
                                                             {/* Add-ons */}
-                                                            <div>
+                                                            <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
                                                                     <label className="block text-sm font-medium text-gray-700">
                                                                         Add-ons / Extras
@@ -1073,7 +1073,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
                                                         </div>
 
-                                                        <div className="col-span-1 space-y-4">
+                                                        <div className="col-span-1 space-y-5">
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                                                     Base Price ($)
