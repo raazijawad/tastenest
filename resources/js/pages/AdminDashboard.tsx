@@ -23,6 +23,8 @@ import {
     FileText,
     Edit,
     Trash2,
+    ChevronLeft,
+    ChevronRight,
 } from 'lucide-react';
 
 /* ─── tiny SVG area chart ─── */
@@ -115,6 +117,8 @@ export default function AdminDashboard({ auth }: any) {
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     // Fetch categories from API on mount
     useEffect(() => {
@@ -854,6 +858,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                     })
                                                                     .then((response) => {
                                                                         setProducts([...products, response.data]);
+                                                                        setCurrentPage(1);
                                                                         setNewProductName('');
                                                                         setNewProductPrice('');
                                                                         setNewProductCategory('');
@@ -1209,6 +1214,43 @@ export default function AdminDashboard({ auth }: any) {
                                         </motion.div>
                                     )}
 
+                                    {/* Pagination */}
+                                    {products.length > itemsPerPage && (
+                                        <div className="flex items-center justify-between mb-4">
+                                            <p className="text-sm text-gray-500">
+                                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, products.length)} of {products.length} products
+                                            </p>
+                                            <div className="flex gap-1">
+                                                <button
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                                    disabled={currentPage === 1}
+                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                                >
+                                                    <ChevronLeft size={16} />
+                                                </button>
+                                                {Array.from({ length: Math.ceil(products.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`px-3 py-1.5 border rounded-lg text-sm font-medium transition ${currentPage === page
+                                                                ? 'bg-[#E05D36] text-white border-[#E05D36]'
+                                                                : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                ))}
+                                                <button
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                                    disabled={currentPage * itemsPerPage >= products.length}
+                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                                >
+                                                    <ChevronRight size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="space-y-3">
                                         {products.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-12 px-4 bg-white rounded-xl border border-gray-100">
@@ -1219,7 +1261,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-sm text-gray-400 mt-1">Click "Add Product" to create your first product</p>
                                             </div>
                                         ) : (
-                                            products.map((product) => (
+                                            products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((product) => (
                                                 <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
                                                     <div className="flex items-center gap-4 p-4">
                                                         <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center overflow-hidden relative shrink-0">
@@ -1279,6 +1321,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                             axios.delete(`/api/products/${product.id}`)
                                                                                 .then(() => {
                                                                                     setProducts(products.filter(p => p.id !== product.id));
+                                                                                    if (products.length <= itemsPerPage && currentPage > 1) {
+                                                                                        setCurrentPage(currentPage - 1);
+                                                                                    }
                                                                                 })
                                                                                 .catch((error) => {
                                                                                     console.error('Error deleting product:', error);
