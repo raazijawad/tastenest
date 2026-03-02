@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('status')->default('Available');
             $table->string('image')->nullable();
+            $table->json('size_options')->nullable();
+            $table->json('addons')->nullable();
             $table->timestamps();
         });
     }

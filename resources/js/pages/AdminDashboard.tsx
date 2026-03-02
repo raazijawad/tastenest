@@ -100,6 +100,8 @@ export default function AdminDashboard({ auth }: any) {
     const [newProductDescription, setNewProductDescription] = useState('');
     const [newProductImage, setNewProductImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
 
     // Fetch categories from API on mount
@@ -564,41 +566,177 @@ export default function AdminDashboard({ auth }: any) {
                                                 </div>
 
                                                 <form>
-                                                    <div className="grid grid-cols-2 gap-6">
-                                                        <div className="space-y-4">
+                                                    <div className="grid grid-cols-3 gap-6">
+                                                        <div className="col-span-2 space-y-4">
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                        Product Name
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={newProductName}
+                                                                        onChange={(e) => setNewProductName(e.target.value)}
+                                                                        placeholder="e.g., Artisan Burger"
+                                                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                        autoFocus
+                                                                    />
+                                                                </div>
+
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                        Category
+                                                                    </label>
+                                                                    <select
+                                                                        value={newProductCategory}
+                                                                        onChange={(e) => setNewProductCategory(e.target.value)}
+                                                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                    >
+                                                                        <option value="">Select a category</option>
+                                                                        {categories.map((cat) => (
+                                                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                                    Product Name
+                                                                    Description
                                                                 </label>
-                                                                <input
-                                                                    type="text"
-                                                                    value={newProductName}
-                                                                    onChange={(e) => setNewProductName(e.target.value)}
-                                                                    placeholder="e.g., Artisan Burger"
-                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                    autoFocus
+                                                                <textarea
+                                                                    value={newProductDescription}
+                                                                    onChange={(e) => setNewProductDescription(e.target.value)}
+                                                                    placeholder="Brief description of this product"
+                                                                    rows={3}
+                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
                                                                 />
                                                             </div>
 
+                                                            {/* Size Options */}
                                                             <div>
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                                    Category
-                                                                </label>
-                                                                <select
-                                                                    value={newProductCategory}
-                                                                    onChange={(e) => setNewProductCategory(e.target.value)}
-                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                >
-                                                                    <option value="">Select a category</option>
-                                                                    {categories.map((cat) => (
-                                                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <label className="block text-sm font-medium text-gray-700">
+                                                                        Size Options
+                                                                    </label>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '' }])}
+                                                                        className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                    >
+                                                                        <Plus size={14} /> Add Size
+                                                                    </button>
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-2">
+                                                                    {sizeOptions.map((option, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <select
+                                                                                value={option.size}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...sizeOptions];
+                                                                                    newOptions[index].size = e.target.value;
+                                                                                    setSizeOptions(newOptions);
+                                                                                }}
+                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                            >
+                                                                                <option value="">Select Size</option>
+                                                                                <option value="Small">Small</option>
+                                                                                <option value="Medium">Medium</option>
+                                                                                <option value="Large">Large</option>
+                                                                            </select>
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={option.price}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...sizeOptions];
+                                                                                    newOptions[index].price = e.target.value;
+                                                                                    setSizeOptions(newOptions);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newOptions = sizeOptions.filter((_, i) => i !== index);
+                                                                                    setSizeOptions(newOptions);
+                                                                                }}
+                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={16} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
                                                                     ))}
-                                                                </select>
+                                                                </div>
+                                                                {sizeOptions.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                                )}
                                                             </div>
 
+                                                            {/* Add-ons */}
+                                                            <div>
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <label className="block text-sm font-medium text-gray-700">
+                                                                        Add-ons / Extras
+                                                                    </label>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setAddons([...addons, { name: '', price: '' }])}
+                                                                        className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                    >
+                                                                        <Plus size={14} /> Add Extra
+                                                                    </button>
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    {addons.map((addon, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={addon.name}
+                                                                                onChange={(e) => {
+                                                                                    const newAddons = [...addons];
+                                                                                    newAddons[index].name = e.target.value;
+                                                                                    setAddons(newAddons);
+                                                                                }}
+                                                                                placeholder="e.g., Extra Cheese"
+                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                            />
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={addon.price}
+                                                                                onChange={(e) => {
+                                                                                    const newAddons = [...addons];
+                                                                                    newAddons[index].price = e.target.value;
+                                                                                    setAddons(newAddons);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newAddons = addons.filter((_, i) => i !== index);
+                                                                                    setAddons(newAddons);
+                                                                                }}
+                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={16} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {addons.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No add-ons added</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-span-1 space-y-4">
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                                    Price ($)
+                                                                    Base Price ($)
                                                                 </label>
                                                                 <input
                                                                     type="number"
@@ -610,30 +748,15 @@ export default function AdminDashboard({ auth }: any) {
                                                                 />
                                                             </div>
 
-                                                            <div>
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                                    Description
-                                                                </label>
-                                                                <textarea
-                                                                    value={newProductDescription}
-                                                                    onChange={(e) => setNewProductDescription(e.target.value)}
-                                                                    placeholder="Brief description of this product"
-                                                                    rows={5}
-                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
-                                                                />
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="space-y-4">
                                                             <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                                                 Product Image
                                                             </label>
                                                             <div className="flex flex-col">
                                                                 {imagePreview ? (
                                                                     <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 mb-3">
-                                                                        <img
-                                                                            src={imagePreview}
-                                                                            alt="Preview"
+                                                                        <img 
+                                                                            src={imagePreview} 
+                                                                            alt="Preview" 
                                                                             className="w-full h-full object-cover"
                                                                         />
                                                                     </div>
@@ -702,6 +825,12 @@ export default function AdminDashboard({ auth }: any) {
                                                                     formData.append('price', newProductPrice);
                                                                     formData.append('description', newProductDescription);
                                                                     formData.append('status', 'Available');
+                                                                    if (sizeOptions.length > 0) {
+                                                                        formData.append('size_options', JSON.stringify(sizeOptions));
+                                                                    }
+                                                                    if (addons.length > 0) {
+                                                                        formData.append('addons', JSON.stringify(addons));
+                                                                    }
                                                                     if (newProductImage) {
                                                                         formData.append('image', newProductImage);
                                                                     }
@@ -719,6 +848,8 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setNewProductDescription('');
                                                                         setNewProductImage(null);
                                                                         setImagePreview(null);
+                                                                        setSizeOptions([]);
+                                                                        setAddons([]);
                                                                         setShowAddProduct(false);
                                                                     })
                                                                     .catch((error) => {

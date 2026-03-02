@@ -13,9 +13,13 @@ class Product extends Model
         'description',
         'status',
         'image',
+        'size_options',
+        'addons',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'size_options' => 'array',
+        'addons' => 'array',
     ];
 }

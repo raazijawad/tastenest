@@ -29,11 +29,23 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'status' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'size_options' => 'nullable|string',
+            'addons' => 'nullable|string',
         ]);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        $sizeOptions = null;
+        if (isset($validated['size_options'])) {
+            $sizeOptions = json_decode($validated['size_options'], true);
+        }
+
+        $addons = null;
+        if (isset($validated['addons'])) {
+            $addons = json_decode($validated['addons'], true);
         }
 
         $product = Product::create([
@@ -43,6 +55,8 @@ class ProductController extends Controller
             'description' => $validated['description'] ?? null,
             'status' => $validated['status'] ?? 'Available',
             'image' => $imagePath,
+            'size_options' => $sizeOptions,
+            'addons' => $addons,
         ]);
 
         return response()->json($product, 201);
