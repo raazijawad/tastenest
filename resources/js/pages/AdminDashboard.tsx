@@ -1251,9 +1251,9 @@ export default function AdminDashboard({ auth }: any) {
                                         </div>
                                     )}
 
-                                    <div className="space-y-3">
+                                    <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
                                         {products.length === 0 ? (
-                                            <div className="flex flex-col items-center justify-center py-12 px-4 bg-white rounded-xl border border-gray-100">
+                                            <div className="flex flex-col items-center justify-center py-12 px-4">
                                                 <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center mb-4">
                                                     <Package size={24} className="text-gray-400" />
                                                 </div>
@@ -1262,80 +1262,64 @@ export default function AdminDashboard({ auth }: any) {
                                             </div>
                                         ) : (
                                             products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((product) => (
-                                                <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
-                                                    <div className="flex items-center gap-4 p-4">
-                                                        <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center overflow-hidden relative shrink-0">
-                                                            {product.image ? (
-                                                                <img
-                                                                    src={`/storage/${product.image}`}
-                                                                    alt={product.name}
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                            ) : (
-                                                                <Package size={32} className="text-gray-400" />
-                                                            )}
+                                                <div key={product.id} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors group">
+                                                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
+                                                        <Package size={16} className="text-[#E05D36]" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-3">
+                                                            <p className="text-sm font-medium text-gray-800 truncate">{product.name}</p>
+                                                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${product.status === 'Available' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                                {product.status}
+                                                            </span>
                                                         </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-center gap-3">
-                                                                <p className="text-base font-semibold text-gray-800 truncate">{product.name}</p>
-                                                                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${product.status === 'Available' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                                    {product.status}
-                                                                </span>
-                                                            </div>
-                                                            <p className="text-sm text-gray-500 mt-0.5">{product.category}</p>
-                                                            {product.description && (
-                                                                <p className="text-sm text-gray-400 mt-1 line-clamp-1">{product.description}</p>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex items-center gap-4 shrink-0">
-                                                            <span className="text-lg font-bold text-[#E05D36]">${parseFloat(product.price).toFixed(2)}</span>
-                                                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <button
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setEditingProduct(product);
-                                                                        setEditProductName(product.name);
-                                                                        setEditProductPrice(product.price);
-                                                                        setEditProductCategory(product.category || '');
-                                                                        setEditProductDescription(product.description || '');
-                                                                        setEditImagePreview(product.image ? `/storage/${product.image}` : null);
-                                                                        try {
-                                                                            setEditSizeOptions(product.size_options ? JSON.parse(product.size_options) : []);
-                                                                        } catch {
-                                                                            setEditSizeOptions([]);
-                                                                        }
-                                                                        try {
-                                                                            setEditAddons(product.addons ? JSON.parse(product.addons) : []);
-                                                                        } catch {
-                                                                            setEditAddons([]);
-                                                                        }
-                                                                        setShowEditProduct(true);
-                                                                    }}
-                                                                    className="p-2 bg-gray-50 rounded-lg text-gray-600 hover:text-[#E05D36] hover:bg-gray-100 transition"
-                                                                >
-                                                                    <Edit size={16} />
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        if (confirm('Are you sure you want to delete this product?')) {
-                                                                            axios.delete(`/api/products/${product.id}`)
-                                                                                .then(() => {
-                                                                                    setProducts(products.filter(p => p.id !== product.id));
-                                                                                    if (products.length <= itemsPerPage && currentPage > 1) {
-                                                                                        setCurrentPage(currentPage - 1);
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    console.error('Error deleting product:', error);
-                                                                                });
-                                                                        }
-                                                                    }}
-                                                                    className="p-2 bg-gray-50 rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 transition"
-                                                                >
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                                        <p className="text-xs text-gray-400">{product.category} • ${parseFloat(product.price).toFixed(2)}</p>
+                                                    </div>
+                                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setEditingProduct(product);
+                                                                setEditProductName(product.name);
+                                                                setEditProductPrice(product.price);
+                                                                setEditProductCategory(product.category || '');
+                                                                setEditProductDescription(product.description || '');
+                                                                setEditImagePreview(product.image ? `/storage/${product.image}` : null);
+                                                                try {
+                                                                    setEditSizeOptions(product.size_options ? JSON.parse(product.size_options) : []);
+                                                                } catch {
+                                                                    setEditSizeOptions([]);
+                                                                }
+                                                                try {
+                                                                    setEditAddons(product.addons ? JSON.parse(product.addons) : []);
+                                                                } catch {
+                                                                    setEditAddons([]);
+                                                                }
+                                                                setShowEditProduct(true);
+                                                            }}
+                                                            className="p-2 text-gray-400 hover:text-[#E05D36] hover:bg-gray-100 rounded-lg transition"
+                                                        >
+                                                            <Edit size={14} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm('Are you sure you want to delete this product?')) {
+                                                                    axios.delete(`/api/products/${product.id}`)
+                                                                        .then(() => {
+                                                                            setProducts(products.filter(p => p.id !== product.id));
+                                                                            if (products.length <= itemsPerPage && currentPage > 1) {
+                                                                                setCurrentPage(currentPage - 1);
+                                                                            }
+                                                                        })
+                                                                        .catch((error) => {
+                                                                            console.error('Error deleting product:', error);
+                                                                        });
+                                                                }
+                                                            }}
+                                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
                                                     </div>
                                                 </div>
                                             ))
