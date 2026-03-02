@@ -1214,43 +1214,6 @@ export default function AdminDashboard({ auth }: any) {
                                         </motion.div>
                                     )}
 
-                                    {/* Pagination */}
-                                    {products.length > itemsPerPage && (
-                                        <div className="flex items-center justify-between mb-4">
-                                            <p className="text-sm text-gray-500">
-                                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, products.length)} of {products.length} products
-                                            </p>
-                                            <div className="flex gap-1">
-                                                <button
-                                                    onClick={() => setCurrentPage(currentPage - 1)}
-                                                    disabled={currentPage === 1}
-                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                                >
-                                                    <ChevronLeft size={16} />
-                                                </button>
-                                                {Array.from({ length: Math.ceil(products.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
-                                                    <button
-                                                        key={page}
-                                                        onClick={() => setCurrentPage(page)}
-                                                        className={`px-3 py-1.5 border rounded-lg text-sm font-medium transition ${currentPage === page
-                                                                ? 'bg-[#E05D36] text-white border-[#E05D36]'
-                                                                : 'border-gray-200 text-gray-700 hover:bg-gray-50'
-                                                            }`}
-                                                    >
-                                                        {page}
-                                                    </button>
-                                                ))}
-                                                <button
-                                                    onClick={() => setCurrentPage(currentPage + 1)}
-                                                    disabled={currentPage * itemsPerPage >= products.length}
-                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                                >
-                                                    <ChevronRight size={16} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
                                     <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
                                         {products.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-12 px-4">
@@ -1325,6 +1288,43 @@ export default function AdminDashboard({ auth }: any) {
                                             ))
                                         )}
                                     </div>
+
+                                    {/* Pagination */}
+                                    {products.length > 0 && (
+                                        <div className="flex items-center justify-between mt-4">
+                                            <p className="text-sm text-gray-500">
+                                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, products.length)} of {products.length} products
+                                            </p>
+                                            <div className="flex gap-1">
+                                                <button
+                                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                                    disabled={currentPage === 1}
+                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                                >
+                                                    <ChevronLeft size={16} />
+                                                </button>
+                                                {Array.from({ length: Math.ceil(products.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`px-3 py-1.5 border rounded-lg text-sm font-medium transition ${currentPage === page
+                                                                ? 'bg-[#E05D36] text-white border-[#E05D36]'
+                                                                : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                ))}
+                                                <button
+                                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                                    disabled={currentPage * itemsPerPage >= products.length}
+                                                    className="p-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                                >
+                                                    <ChevronRight size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
 
