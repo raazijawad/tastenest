@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import {
     LayoutDashboard,
     Settings,
@@ -92,6 +93,34 @@ export default function AdminDashboard({ auth }: any) {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [newCategoryDescription, setNewCategoryDescription] = useState('');
     const [categories, setCategories] = useState<any[]>([]);
+    const [showAddProduct, setShowAddProduct] = useState(false);
+    const [newProductName, setNewProductName] = useState('');
+    const [newProductPrice, setNewProductPrice] = useState('');
+    const [newProductCategory, setNewProductCategory] = useState('');
+    const [newProductDescription, setNewProductDescription] = useState('');
+    const [products, setProducts] = useState<any[]>([]);
+
+    // Fetch categories from API on mount
+    useEffect(() => {
+        axios.get('/api/categories')
+            .then((response) => {
+                setCategories(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching categories:', error);
+            });
+    }, []);
+
+    // Fetch products from API on mount
+    useEffect(() => {
+        axios.get('/api/products')
+            .then((response) => {
+                setProducts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching products:', error);
+            });
+    }, []);
 
     const navMain = [
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
@@ -428,16 +457,20 @@ export default function AdminDashboard({ auth }: any) {
                                                             onClick={(e) => {
                                                                 e.preventDefault();
                                                                 if (newCategoryName.trim()) {
-                                                                    setCategories([...categories, {
-                                                                        id: Date.now(),
+                                                                    axios.post('/api/categories', {
                                                                         name: newCategoryName,
                                                                         description: newCategoryDescription,
-                                                                        products: 0,
                                                                         status: 'Active'
-                                                                    }]);
-                                                                    setNewCategoryName('');
-                                                                    setNewCategoryDescription('');
-                                                                    setShowAddCategory(false);
+                                                                    })
+                                                                    .then((response) => {
+                                                                        setCategories([...categories, response.data]);
+                                                                        setNewCategoryName('');
+                                                                        setNewCategoryDescription('');
+                                                                        setShowAddCategory(false);
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        console.error('Error adding category:', error);
+                                                                    });
                                                                 }
                                                             }}
                                                             className="flex-1 px-4 py-2.5 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition"
@@ -494,27 +527,169 @@ export default function AdminDashboard({ auth }: any) {
                                             <h1 className="text-xl font-bold text-gray-900">Products</h1>
                                             <p className="text-sm text-gray-500 mt-0.5">Manage your menu items</p>
                                         </div>
-                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                        <button 
+                                            onClick={() => setShowAddProduct(true)}
+                                            className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+                                        >
                                             <Plus size={16} /> Add Product
                                         </button>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        {[...Array(6)].map((_, i) => (
-                                            <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                                                <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                                    <Package size={40} className="text-gray-400" />
+                                    {/* Add Product Modal */}
+                                    {showAddProduct && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                                            onClick={() => setShowAddProduct(false)}
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.95, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.95, opacity: 0 }}
+                                                className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <h2 className="text-lg font-bold text-gray-900">Add New Product</h2>
+                                                    <button
+                                                        onClick={() => setShowAddProduct(false)}
+                                                        className="text-gray-400 hover:text-gray-600 transition"
+                                                    >
+                                                        <Plus size={20} className="rotate-45" />
+                                                    </button>
                                                 </div>
-                                                <div className="p-4">
-                                                    <p className="text-sm font-semibold text-gray-800">Product Item {i + 1}</p>
-                                                    <p className="text-xs text-gray-400 mt-1">Category {String.fromCharCode(65 + i)}</p>
-                                                    <div className="flex items-center justify-between mt-3">
-                                                        <span className="text-sm font-bold text-[#E05D36]">${(12.99 + i * 3).toFixed(2)}</span>
-                                                        <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">Available</span>
+
+                                                <form className="space-y-4">
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                            Product Name
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={newProductName}
+                                                            onChange={(e) => setNewProductName(e.target.value)}
+                                                            placeholder="e.g., Artisan Burger"
+                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                            autoFocus
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                            Category
+                                                        </label>
+                                                        <select
+                                                            value={newProductCategory}
+                                                            onChange={(e) => setNewProductCategory(e.target.value)}
+                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                        >
+                                                            <option value="">Select a category</option>
+                                                            {categories.map((cat) => (
+                                                                <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                            Price ($)
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={newProductPrice}
+                                                            onChange={(e) => setNewProductPrice(e.target.value)}
+                                                            placeholder="e.g., 12.99"
+                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                            Description
+                                                        </label>
+                                                        <textarea
+                                                            value={newProductDescription}
+                                                            onChange={(e) => setNewProductDescription(e.target.value)}
+                                                            placeholder="Brief description of this product"
+                                                            rows={3}
+                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
+                                                        />
+                                                    </div>
+
+                                                    <div className="flex gap-3 pt-4">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowAddProduct(false)}
+                                                            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            type="submit"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (newProductName.trim() && newProductPrice) {
+                                                                    axios.post('/api/products', {
+                                                                        name: newProductName,
+                                                                        category: newProductCategory || 'Uncategorized',
+                                                                        price: parseFloat(newProductPrice),
+                                                                        description: newProductDescription,
+                                                                        status: 'Available'
+                                                                    })
+                                                                    .then((response) => {
+                                                                        setProducts([...products, response.data]);
+                                                                        setNewProductName('');
+                                                                        setNewProductPrice('');
+                                                                        setNewProductCategory('');
+                                                                        setNewProductDescription('');
+                                                                        setShowAddProduct(false);
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        console.error('Error adding product:', error);
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="flex-1 px-4 py-2.5 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition"
+                                                        >
+                                                            Add Product
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {products.length === 0 ? (
+                                            <div className="col-span-full flex flex-col items-center justify-center py-12 px-4">
+                                                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center mb-4">
+                                                    <Package size={24} className="text-gray-400" />
+                                                </div>
+                                                <p className="text-gray-800 font-semibold">No products yet</p>
+                                                <p className="text-sm text-gray-400 mt-1">Click "Add Product" to create your first product</p>
+                                            </div>
+                                        ) : (
+                                            products.map((product) => (
+                                                <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                                                    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                                        <Package size={40} className="text-gray-400" />
+                                                    </div>
+                                                    <div className="p-4">
+                                                        <p className="text-sm font-semibold text-gray-800">{product.name}</p>
+                                                        <p className="text-xs text-gray-400 mt-1">{product.category}</p>
+                                                        <div className="flex items-center justify-between mt-3">
+                                                            <span className="text-sm font-bold text-[#E05D36]">${parseFloat(product.price).toFixed(2)}</span>
+                                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${product.status === 'Available' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                                {product.status}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
