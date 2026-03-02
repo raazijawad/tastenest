@@ -98,6 +98,8 @@ export default function AdminDashboard({ auth }: any) {
     const [newProductPrice, setNewProductPrice] = useState('');
     const [newProductCategory, setNewProductCategory] = useState('');
     const [newProductDescription, setNewProductDescription] = useState('');
+    const [newProductImage, setNewProductImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [products, setProducts] = useState<any[]>([]);
 
     // Fetch categories from API on mount
@@ -382,7 +384,7 @@ export default function AdminDashboard({ auth }: any) {
                                             <h1 className="text-xl font-bold text-gray-900">Category</h1>
                                             <p className="text-sm text-gray-500 mt-0.5">Manage your menu categories</p>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => setShowAddCategory(true)}
                                             className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
                                         >
@@ -527,7 +529,7 @@ export default function AdminDashboard({ auth }: any) {
                                             <h1 className="text-xl font-bold text-gray-900">Products</h1>
                                             <p className="text-sm text-gray-500 mt-0.5">Manage your menu items</p>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => setShowAddProduct(true)}
                                             className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
                                         >
@@ -548,7 +550,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 initial={{ scale: 0.95, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 exit={{ scale: 0.95, opacity: 0 }}
-                                                className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <div className="flex items-center justify-between mb-6">
@@ -561,65 +563,127 @@ export default function AdminDashboard({ auth }: any) {
                                                     </button>
                                                 </div>
 
-                                                <form className="space-y-4">
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                            Product Name
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            value={newProductName}
-                                                            onChange={(e) => setNewProductName(e.target.value)}
-                                                            placeholder="e.g., Artisan Burger"
-                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                            autoFocus
-                                                        />
+                                                <form>
+                                                    <div className="grid grid-cols-2 gap-6">
+                                                        <div className="space-y-4">
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Product Name
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={newProductName}
+                                                                    onChange={(e) => setNewProductName(e.target.value)}
+                                                                    placeholder="e.g., Artisan Burger"
+                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                    autoFocus
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Category
+                                                                </label>
+                                                                <select
+                                                                    value={newProductCategory}
+                                                                    onChange={(e) => setNewProductCategory(e.target.value)}
+                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                >
+                                                                    <option value="">Select a category</option>
+                                                                    {categories.map((cat) => (
+                                                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                                    ))}
+                                                                </select>
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Price ($)
+                                                                </label>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={newProductPrice}
+                                                                    onChange={(e) => setNewProductPrice(e.target.value)}
+                                                                    placeholder="e.g., 12.99"
+                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                />
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Description
+                                                                </label>
+                                                                <textarea
+                                                                    value={newProductDescription}
+                                                                    onChange={(e) => setNewProductDescription(e.target.value)}
+                                                                    placeholder="Brief description of this product"
+                                                                    rows={5}
+                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="space-y-4">
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                Product Image
+                                                            </label>
+                                                            <div className="flex flex-col">
+                                                                {imagePreview ? (
+                                                                    <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 mb-3">
+                                                                        <img
+                                                                            src={imagePreview}
+                                                                            alt="Preview"
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-3 bg-gray-50">
+                                                                        <Package size={40} className="text-gray-400 mb-2" />
+                                                                        <span className="text-sm text-gray-500 text-center px-4">
+                                                                            Drag and drop or click to upload
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                <label className="w-full cursor-pointer">
+                                                                    <div className="flex items-center justify-center px-4 py-3 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition">
+                                                                        <Package size={18} className="mr-2" />
+                                                                        {imagePreview ? 'Change Image' : 'Upload Image'}
+                                                                    </div>
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={(e) => {
+                                                                            const file = e.target.files?.[0];
+                                                                            if (file) {
+                                                                                setNewProductImage(file);
+                                                                                const reader = new FileReader();
+                                                                                reader.onloadend = () => {
+                                                                                    setImagePreview(reader.result as string);
+                                                                                };
+                                                                                reader.readAsDataURL(file);
+                                                                            }
+                                                                        }}
+                                                                        className="hidden"
+                                                                    />
+                                                                </label>
+                                                                {imagePreview && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setNewProductImage(null);
+                                                                            setImagePreview(null);
+                                                                        }}
+                                                                        className="w-full mt-2 px-4 py-3 border border-red-200 text-red-500 hover:bg-red-50 rounded-lg text-sm font-medium transition"
+                                                                    >
+                                                                        Remove Image
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                            Category
-                                                        </label>
-                                                        <select
-                                                            value={newProductCategory}
-                                                            onChange={(e) => setNewProductCategory(e.target.value)}
-                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                        >
-                                                            <option value="">Select a category</option>
-                                                            {categories.map((cat) => (
-                                                                <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                            Price ($)
-                                                        </label>
-                                                        <input
-                                                            type="number"
-                                                            step="0.01"
-                                                            value={newProductPrice}
-                                                            onChange={(e) => setNewProductPrice(e.target.value)}
-                                                            placeholder="e.g., 12.99"
-                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                        />
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                                            Description
-                                                        </label>
-                                                        <textarea
-                                                            value={newProductDescription}
-                                                            onChange={(e) => setNewProductDescription(e.target.value)}
-                                                            placeholder="Brief description of this product"
-                                                            rows={3}
-                                                            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
-                                                        />
-                                                    </div>
-
-                                                    <div className="flex gap-3 pt-4">
+                                                    <div className="flex gap-3 pt-4 mt-6 border-t border-gray-100">
                                                         <button
                                                             type="button"
                                                             onClick={() => setShowAddProduct(false)}
@@ -632,12 +696,20 @@ export default function AdminDashboard({ auth }: any) {
                                                             onClick={(e) => {
                                                                 e.preventDefault();
                                                                 if (newProductName.trim() && newProductPrice) {
-                                                                    axios.post('/api/products', {
-                                                                        name: newProductName,
-                                                                        category: newProductCategory || 'Uncategorized',
-                                                                        price: parseFloat(newProductPrice),
-                                                                        description: newProductDescription,
-                                                                        status: 'Available'
+                                                                    const formData = new FormData();
+                                                                    formData.append('name', newProductName);
+                                                                    formData.append('category', newProductCategory || 'Uncategorized');
+                                                                    formData.append('price', newProductPrice);
+                                                                    formData.append('description', newProductDescription);
+                                                                    formData.append('status', 'Available');
+                                                                    if (newProductImage) {
+                                                                        formData.append('image', newProductImage);
+                                                                    }
+
+                                                                    axios.post('/api/products', formData, {
+                                                                        headers: {
+                                                                            'Content-Type': 'multipart/form-data',
+                                                                        },
                                                                     })
                                                                     .then((response) => {
                                                                         setProducts([...products, response.data]);
@@ -645,6 +717,8 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setNewProductPrice('');
                                                                         setNewProductCategory('');
                                                                         setNewProductDescription('');
+                                                                        setNewProductImage(null);
+                                                                        setImagePreview(null);
                                                                         setShowAddProduct(false);
                                                                     })
                                                                     .catch((error) => {
@@ -674,8 +748,16 @@ export default function AdminDashboard({ auth }: any) {
                                         ) : (
                                             products.map((product) => (
                                                 <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                                                    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                                        <Package size={40} className="text-gray-400" />
+                                                    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                                                        {product.image ? (
+                                                            <img
+                                                                src={`/storage/${product.image}`}
+                                                                alt={product.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <Package size={40} className="text-gray-400" />
+                                                        )}
                                                     </div>
                                                     <div className="p-4">
                                                         <p className="text-sm font-semibold text-gray-800">{product.name}</p>
@@ -737,7 +819,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-lg font-bold text-gray-900 mt-1">24</p>
                                             </div>
                                             <div className="bg-gray-50 rounded-lg p-3 text-center">
-                                                <p className="text-xs text-gray-500">Rating</p>
+add                                                 <p className="text-xs text-gray-500">Rating</p>
                                                 <p className="text-lg font-bold text-[#E05D36] mt-1">4.8★</p>
                                             </div>
                                             <div className="bg-gray-50 rounded-lg p-3 text-center">

@@ -28,7 +28,13 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'status' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
 
         $product = Product::create([
             'name' => $validated['name'],
@@ -36,7 +42,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'description' => $validated['description'] ?? null,
             'status' => $validated['status'] ?? 'Available',
-            'image' => null,
+            'image' => $imagePath,
         ]);
 
         return response()->json($product, 201);
@@ -64,7 +70,16 @@ class ProductController extends Controller
             'price' => 'sometimes|required|numeric|min:0',
             'description' => 'nullable|string',
             'status' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($product->image) {
+                \Storage::disk('public')->delete($product->image);
+            }
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
 
         $product->update($validated);
 
