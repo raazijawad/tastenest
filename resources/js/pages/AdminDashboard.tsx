@@ -1215,6 +1215,24 @@ export default function AdminDashboard({ auth }: any) {
                                     )}
 
                                     <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                                        {/* Header */}
+                                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-t-xl border-b border-gray-100">
+                                            <div className="w-9 h-9 shrink-0"></div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Product Name</p>
+                                            </div>
+                                            <div className="w-32 shrink-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</p>
+                                            </div>
+                                            <div className="w-24 shrink-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Base Price</p>
+                                            </div>
+                                            <div className="w-20 shrink-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Actions</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Products List */}
                                         {products.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-12 px-4">
                                                 <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center mb-4">
@@ -1236,9 +1254,14 @@ export default function AdminDashboard({ auth }: any) {
                                                                 {product.status}
                                                             </span>
                                                         </div>
-                                                        <p className="text-xs text-gray-400">{product.category} • ${parseFloat(product.price).toFixed(2)}</p>
                                                     </div>
-                                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <div className="w-32 shrink-0">
+                                                        <p className="text-sm text-gray-600">{product.category}</p>
+                                                    </div>
+                                                    <div className="w-24 shrink-0">
+                                                        <p className="text-sm font-bold text-[#E05D36] text-right">${parseFloat(product.price).toFixed(2)}</p>
+                                                    </div>
+                                                    <div className="w-20 shrink-0 flex gap-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
