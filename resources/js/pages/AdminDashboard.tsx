@@ -21,6 +21,8 @@ import {
     Tags,
     Package,
     FileText,
+    Edit,
+    Trash2,
 } from 'lucide-react';
 
 /* ─── tiny SVG area chart ─── */
@@ -103,6 +105,16 @@ export default function AdminDashboard({ auth }: any) {
     const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
+    const [showEditProduct, setShowEditProduct] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<any>(null);
+    const [editProductName, setEditProductName] = useState('');
+    const [editProductPrice, setEditProductPrice] = useState('');
+    const [editProductCategory, setEditProductCategory] = useState('');
+    const [editProductDescription, setEditProductDescription] = useState('');
+    const [editProductImage, setEditProductImage] = useState<File | null>(null);
+    const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+    const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
 
     // Fetch categories from API on mount
     useEffect(() => {
@@ -867,6 +879,336 @@ export default function AdminDashboard({ auth }: any) {
                                         </motion.div>
                                     )}
 
+                                    {/* Edit Product Modal */}
+                                    {showEditProduct && editingProduct && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                                            onClick={() => setShowEditProduct(false)}
+                                        >
+                                            <motion.div
+                                                initial={{ scale: 0.95, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.95, opacity: 0 }}
+                                                className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <h2 className="text-lg font-bold text-gray-900">Edit Product</h2>
+                                                    <button
+                                                        onClick={() => setShowEditProduct(false)}
+                                                        className="text-gray-400 hover:text-gray-600 transition"
+                                                    >
+                                                        <Plus size={20} className="rotate-45" />
+                                                    </button>
+                                                </div>
+
+                                                <form>
+                                                    <div className="grid grid-cols-3 gap-6">
+                                                        <div className="col-span-2 space-y-4">
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                        Product Name
+                                                                    </label>
+                                                                    <input
+                                                                        type="text"
+                                                                        value={editProductName}
+                                                                        onChange={(e) => setEditProductName(e.target.value)}
+                                                                        placeholder="e.g., Artisan Burger"
+                                                                        className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                        autoFocus
+                                                                    />
+                                                                </div>
+
+                                                                <div>
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                        Category
+                                                                    </label>
+                                                                    <select
+                                                                        value={editProductCategory}
+                                                                        onChange={(e) => setEditProductCategory(e.target.value)}
+                                                                        className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                    >
+                                                                        <option value="">Select a category</option>
+                                                                        {categories.map((cat) => (
+                                                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Description
+                                                                </label>
+                                                                <textarea
+                                                                    value={editProductDescription}
+                                                                    onChange={(e) => setEditProductDescription(e.target.value)}
+                                                                    placeholder="Brief description of this product"
+                                                                    rows={3}
+                                                                    className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base resize-none"
+                                                                />
+                                                            </div>
+
+                                                            {/* Size Options */}
+                                                            <div>
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <label className="block text-sm font-medium text-gray-700">
+                                                                        Size Options
+                                                                    </label>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditSizeOptions([...editSizeOptions, { size: '', price: '' }])}
+                                                                        className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                    >
+                                                                        <Plus size={14} /> Add Size
+                                                                    </button>
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-2">
+                                                                    {editSizeOptions.map((option, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <select
+                                                                                value={option.size}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...editSizeOptions];
+                                                                                    newOptions[index].size = e.target.value;
+                                                                                    setEditSizeOptions(newOptions);
+                                                                                }}
+                                                                                className="flex-1 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                            >
+                                                                                <option value="">Select Size</option>
+                                                                                <option value="Small">Small</option>
+                                                                                <option value="Medium">Medium</option>
+                                                                                <option value="Large">Large</option>
+                                                                            </select>
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={option.price}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...editSizeOptions];
+                                                                                    newOptions[index].price = e.target.value;
+                                                                                    setEditSizeOptions(newOptions);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-28 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newOptions = editSizeOptions.filter((_, i) => i !== index);
+                                                                                    setEditSizeOptions(newOptions);
+                                                                                }}
+                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={16} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {editSizeOptions.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Add-ons */}
+                                                            <div>
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <label className="block text-sm font-medium text-gray-700">
+                                                                        Add-ons / Extras
+                                                                    </label>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditAddons([...editAddons, { name: '', price: '' }])}
+                                                                        className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                    >
+                                                                        <Plus size={14} /> Add Extra
+                                                                    </button>
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    {editAddons.map((addon, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={addon.name}
+                                                                                onChange={(e) => {
+                                                                                    const newAddons = [...editAddons];
+                                                                                    newAddons[index].name = e.target.value;
+                                                                                    setEditAddons(newAddons);
+                                                                                }}
+                                                                                placeholder="e.g., Extra Cheese"
+                                                                                className="flex-1 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                            />
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={addon.price}
+                                                                                onChange={(e) => {
+                                                                                    const newAddons = [...editAddons];
+                                                                                    newAddons[index].price = e.target.value;
+                                                                                    setEditAddons(newAddons);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-28 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newAddons = editAddons.filter((_, i) => i !== index);
+                                                                                    setEditAddons(newAddons);
+                                                                                }}
+                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={16} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {editAddons.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No add-ons added</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-span-1 space-y-4">
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    Base Price ($)
+                                                                </label>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={editProductPrice}
+                                                                    onChange={(e) => setEditProductPrice(e.target.value)}
+                                                                    placeholder="e.g., 12.99"
+                                                                    className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                />
+                                                            </div>
+
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                Product Image
+                                                            </label>
+                                                            <div className="flex flex-col">
+                                                                {editImagePreview ? (
+                                                                    <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 mb-3">
+                                                                        <img
+                                                                            src={editImagePreview}
+                                                                            alt="Preview"
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-3 bg-gray-50">
+                                                                        <Package size={40} className="text-gray-400 mb-2" />
+                                                                        <span className="text-sm text-gray-500 text-center px-4">
+                                                                            Drag and drop or click to upload
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                                <label className="w-full cursor-pointer">
+                                                                    <div className="flex items-center justify-center px-4 py-3 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition">
+                                                                        <Package size={18} className="mr-2" />
+                                                                        {editImagePreview ? 'Change Image' : 'Upload Image'}
+                                                                    </div>
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={(e) => {
+                                                                            const file = e.target.files?.[0];
+                                                                            if (file) {
+                                                                                setEditProductImage(file);
+                                                                                const reader = new FileReader();
+                                                                                reader.onloadend = () => {
+                                                                                    setEditImagePreview(reader.result as string);
+                                                                                };
+                                                                                reader.readAsDataURL(file);
+                                                                            }
+                                                                        }}
+                                                                        className="hidden"
+                                                                    />
+                                                                </label>
+                                                                {editImagePreview && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setEditProductImage(null);
+                                                                            setEditImagePreview(null);
+                                                                        }}
+                                                                        className="w-full mt-2 px-4 py-3 border border-red-200 text-red-500 hover:bg-red-50 rounded-lg text-sm font-medium transition"
+                                                                    >
+                                                                        Remove Image
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex gap-3 pt-4 mt-6 border-t border-gray-100">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowEditProduct(false)}
+                                                            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            type="submit"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (editProductName.trim() && editProductPrice && editingProduct) {
+                                                                    const formData = new FormData();
+                                                                    formData.append('_method', 'PUT');
+                                                                    formData.append('name', editProductName);
+                                                                    formData.append('category', editProductCategory || 'Uncategorized');
+                                                                    formData.append('price', editProductPrice);
+                                                                    formData.append('description', editProductDescription);
+                                                                    formData.append('status', editingProduct.status);
+                                                                    if (editSizeOptions.length > 0) {
+                                                                        formData.append('size_options', JSON.stringify(editSizeOptions));
+                                                                    }
+                                                                    if (editAddons.length > 0) {
+                                                                        formData.append('addons', JSON.stringify(editAddons));
+                                                                    }
+                                                                    if (editProductImage) {
+                                                                        formData.append('image', editProductImage);
+                                                                    }
+
+                                                                    axios.post(`/api/products/${editingProduct.id}`, formData, {
+                                                                        headers: {
+                                                                            'Content-Type': 'multipart/form-data',
+                                                                        },
+                                                                    })
+                                                                    .then((response) => {
+                                                                        setProducts(products.map(p => p.id === editingProduct.id ? response.data : p));
+                                                                        setEditProductName('');
+                                                                        setEditProductPrice('');
+                                                                        setEditProductCategory('');
+                                                                        setEditProductDescription('');
+                                                                        setEditProductImage(null);
+                                                                        setEditImagePreview(null);
+                                                                        setEditSizeOptions([]);
+                                                                        setEditAddons([]);
+                                                                        setEditingProduct(null);
+                                                                        setShowEditProduct(false);
+                                                                    })
+                                                                    .catch((error) => {
+                                                                        console.error('Error updating product:', error);
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="flex-1 px-4 py-2.5 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition"
+                                                        >
+                                                            Update Product
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </motion.div>
+                                        </motion.div>
+                                    )}
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {products.length === 0 ? (
                                             <div className="col-span-full flex flex-col items-center justify-center py-12 px-4">
@@ -878,8 +1220,8 @@ export default function AdminDashboard({ auth }: any) {
                                             </div>
                                         ) : (
                                             products.map((product) => (
-                                                <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                                                    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                                                <div key={product.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
+                                                    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden relative">
                                                         {product.image ? (
                                                             <img
                                                                 src={`/storage/${product.image}`}
@@ -889,6 +1231,49 @@ export default function AdminDashboard({ auth }: any) {
                                                         ) : (
                                                             <Package size={40} className="text-gray-400" />
                                                         )}
+                                                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setEditingProduct(product);
+                                                                    setEditProductName(product.name);
+                                                                    setEditProductPrice(product.price);
+                                                                    setEditProductCategory(product.category || '');
+                                                                    setEditProductDescription(product.description || '');
+                                                                    setEditImagePreview(product.image ? `/storage/${product.image}` : null);
+                                                                    try {
+                                                                        setEditSizeOptions(product.size_options ? JSON.parse(product.size_options) : []);
+                                                                    } catch {
+                                                                        setEditSizeOptions([]);
+                                                                    }
+                                                                    try {
+                                                                        setEditAddons(product.addons ? JSON.parse(product.addons) : []);
+                                                                    } catch {
+                                                                        setEditAddons([]);
+                                                                    }
+                                                                    setShowEditProduct(true);
+                                                                }}
+                                                                className="p-2 bg-white rounded-lg shadow-md text-gray-600 hover:text-[#E05D36] hover:bg-white transition"
+                                                            >
+                                                                <Edit size={16} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (confirm('Are you sure you want to delete this product?')) {
+                                                                        axios.delete(`/api/products/${product.id}`)
+                                                                            .then(() => {
+                                                                                setProducts(products.filter(p => p.id !== product.id));
+                                                                            })
+                                                                            .catch((error) => {
+                                                                                console.error('Error deleting product:', error);
+                                                                            });
+                                                                    }
+                                                                }}
+                                                                className="p-2 bg-white rounded-lg shadow-md text-gray-600 hover:text-red-600 hover:bg-white transition"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div className="p-4">
                                                         <p className="text-sm font-semibold text-gray-800">{product.name}</p>
