@@ -25,6 +25,8 @@ import {
     Trash2,
     ChevronLeft,
     ChevronRight,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 
 /* ─── tiny SVG area chart ─── */
@@ -104,8 +106,8 @@ export default function AdminDashboard({ auth }: any) {
     const [newProductDescription, setNewProductDescription] = useState('');
     const [newProductImage, setNewProductImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
-    const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
+    const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string; visible?: boolean }[]>([]);
+    const [addons, setAddons] = useState<{ name: string; price: string; visible?: boolean }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [showEditProduct, setShowEditProduct] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -115,10 +117,14 @@ export default function AdminDashboard({ auth }: any) {
     const [editProductDescription, setEditProductDescription] = useState('');
     const [editProductImage, setEditProductImage] = useState<File | null>(null);
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
-    const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
-    const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
+    const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string; visible?: boolean }[]>([]);
+    const [editAddons, setEditAddons] = useState<{ name: string; price: string; visible?: boolean }[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [showSizeOptions, setShowSizeOptions] = useState(true);
+    const [showAddons, setShowAddons] = useState(true);
+    const [editShowSizeOptions, setEditShowSizeOptions] = useState(true);
+    const [editShowAddons, setEditShowAddons] = useState(true);
 
     // Fetch categories from API on mount
     useEffect(() => {
@@ -632,59 +638,83 @@ export default function AdminDashboard({ auth }: any) {
                                                             {/* Size Options */}
                                                             <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
-                                                                    <label className="block text-sm font-medium text-gray-700">
-                                                                        Size Options
-                                                                    </label>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <label className="block text-sm font-medium text-gray-700">
+                                                                            Size Options
+                                                                        </label>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setShowSizeOptions(!showSizeOptions)}
+                                                                            className={`p-1 rounded transition ${showSizeOptions ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                                            title={showSizeOptions ? 'Hide sizes' : 'Show sizes'}
+                                                                        >
+                                                                            {showSizeOptions ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                                        </button>
+                                                                    </div>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '' }])}
+                                                                        onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '', visible: true }])}
                                                                         className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
                                                                     >
                                                                         <Plus size={14} /> Add Size
                                                                     </button>
                                                                 </div>
-                                                                <div className="space-y-2">
-                                                                    {sizeOptions.map((option, index) => (
-                                                                        <div key={index} className="flex gap-2">
-                                                                            <select
-                                                                                value={option.size}
-                                                                                onChange={(e) => {
-                                                                                    const newOptions = [...sizeOptions];
-                                                                                    newOptions[index].size = e.target.value;
-                                                                                    setSizeOptions(newOptions);
-                                                                                }}
-                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                            >
-                                                                                <option value="">Select Size</option>
-                                                                                <option value="Small">Small</option>
-                                                                                <option value="Medium">Medium</option>
-                                                                                <option value="Large">Large</option>
-                                                                            </select>
-                                                                            <input
-                                                                                type="number"
-                                                                                step="0.01"
-                                                                                value={option.price}
-                                                                                onChange={(e) => {
-                                                                                    const newOptions = [...sizeOptions];
-                                                                                    newOptions[index].price = e.target.value;
-                                                                                    setSizeOptions(newOptions);
-                                                                                }}
-                                                                                placeholder="Price"
-                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                            />
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => {
-                                                                                    const newOptions = sizeOptions.filter((_, i) => i !== index);
-                                                                                    setSizeOptions(newOptions);
-                                                                                }}
-                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
-                                                                            >
-                                                                                <Plus size={16} className="rotate-45" />
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
+                                                                {showSizeOptions && (
+                                                                    <div className="space-y-2">
+                                                                        {sizeOptions.map((option, index) => (
+                                                                            <div key={index} className="flex gap-2">
+                                                                                <select
+                                                                                    value={option.size}
+                                                                                    onChange={(e) => {
+                                                                                        const newOptions = [...sizeOptions];
+                                                                                        newOptions[index].size = e.target.value;
+                                                                                        setSizeOptions(newOptions);
+                                                                                    }}
+                                                                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                >
+                                                                                    <option value="">Select Size</option>
+                                                                                    <option value="Small">Small</option>
+                                                                                    <option value="Medium">Medium</option>
+                                                                                    <option value="Large">Large</option>
+                                                                                </select>
+                                                                                <input
+                                                                                    type="number"
+                                                                                    step="0.01"
+                                                                                    value={option.price}
+                                                                                    onChange={(e) => {
+                                                                                        const newOptions = [...sizeOptions];
+                                                                                        newOptions[index].price = e.target.value;
+                                                                                        setSizeOptions(newOptions);
+                                                                                    }}
+                                                                                    placeholder="Price"
+                                                                                    className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                />
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        const newOptions = [...sizeOptions];
+                                                                                        newOptions[index].visible = !newOptions[index].visible;
+                                                                                        setSizeOptions(newOptions);
+                                                                                    }}
+                                                                                    className={`p-2 rounded-lg transition ${option.visible !== false ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                                                    title={option.visible !== false ? 'Visible' : 'Hidden'}
+                                                                                >
+                                                                                    {option.visible !== false ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                                                </button>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        const newOptions = sizeOptions.filter((_, i) => i !== index);
+                                                                                        setSizeOptions(newOptions);
+                                                                                    }}
+                                                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                                >
+                                                                                    <Plus size={16} className="rotate-45" />
+                                                                                </button>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                                 {sizeOptions.length === 0 && (
                                                                     <p className="text-xs text-gray-400 mt-1">No size options added</p>
                                                                 )}
@@ -693,56 +723,80 @@ export default function AdminDashboard({ auth }: any) {
                                                             {/* Add-ons */}
                                                             <div className="space-y-2">
                                                                 <div className="flex items-center justify-between mb-2">
-                                                                    <label className="block text-sm font-medium text-gray-700">
-                                                                        Add-ons / Extras
-                                                                    </label>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <label className="block text-sm font-medium text-gray-700">
+                                                                            Add-ons / Extras
+                                                                        </label>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setShowAddons(!showAddons)}
+                                                                            className={`p-1 rounded transition ${showAddons ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                                            title={showAddons ? 'Hide add-ons' : 'Show add-ons'}
+                                                                        >
+                                                                            {showAddons ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                                        </button>
+                                                                    </div>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setAddons([...addons, { name: '', price: '' }])}
+                                                                        onClick={() => setAddons([...addons, { name: '', price: '', visible: true }])}
                                                                         className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
                                                                     >
                                                                         <Plus size={14} /> Add Extra
                                                                     </button>
                                                                 </div>
-                                                                <div className="space-y-2">
-                                                                    {addons.map((addon, index) => (
-                                                                        <div key={index} className="flex gap-2">
-                                                                            <input
-                                                                                type="text"
-                                                                                value={addon.name}
-                                                                                onChange={(e) => {
-                                                                                    const newAddons = [...addons];
-                                                                                    newAddons[index].name = e.target.value;
-                                                                                    setAddons(newAddons);
-                                                                                }}
-                                                                                placeholder="e.g., Extra Cheese"
-                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                            />
-                                                                            <input
-                                                                                type="number"
-                                                                                step="0.01"
-                                                                                value={addon.price}
-                                                                                onChange={(e) => {
-                                                                                    const newAddons = [...addons];
-                                                                                    newAddons[index].price = e.target.value;
-                                                                                    setAddons(newAddons);
-                                                                                }}
-                                                                                placeholder="Price"
-                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
-                                                                            />
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => {
-                                                                                    const newAddons = addons.filter((_, i) => i !== index);
-                                                                                    setAddons(newAddons);
-                                                                                }}
-                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
-                                                                            >
-                                                                                <Plus size={16} className="rotate-45" />
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
+                                                                {showAddons && (
+                                                                    <div className="space-y-2">
+                                                                        {addons.map((addon, index) => (
+                                                                            <div key={index} className="flex gap-2">
+                                                                                <input
+                                                                                    type="text"
+                                                                                    value={addon.name}
+                                                                                    onChange={(e) => {
+                                                                                        const newAddons = [...addons];
+                                                                                        newAddons[index].name = e.target.value;
+                                                                                        setAddons(newAddons);
+                                                                                    }}
+                                                                                    placeholder="e.g., Extra Cheese"
+                                                                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                />
+                                                                                <input
+                                                                                    type="number"
+                                                                                    step="0.01"
+                                                                                    value={addon.price}
+                                                                                    onChange={(e) => {
+                                                                                        const newAddons = [...addons];
+                                                                                        newAddons[index].price = e.target.value;
+                                                                                        setAddons(newAddons);
+                                                                                    }}
+                                                                                    placeholder="Price"
+                                                                                    className="w-24 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                />
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        const newAddons = [...addons];
+                                                                                        newAddons[index].visible = !newAddons[index].visible;
+                                                                                        setAddons(newAddons);
+                                                                                    }}
+                                                                                    className={`p-2 rounded-lg transition ${addon.visible !== false ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                                                    title={addon.visible !== false ? 'Visible' : 'Hidden'}
+                                                                                >
+                                                                                    {addon.visible !== false ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                                                </button>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        const newAddons = addons.filter((_, i) => i !== index);
+                                                                                        setAddons(newAddons);
+                                                                                    }}
+                                                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                                >
+                                                                                    <Plus size={16} className="rotate-45" />
+                                                                                </button>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                                 {addons.length === 0 && (
                                                                     <p className="text-xs text-gray-400 mt-1">No add-ons added</p>
                                                                 )}
@@ -898,6 +952,9 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Base Price</p>
                                             </div>
                                             <div className="w-20 shrink-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Visible</p>
+                                            </div>
+                                            <div className="w-20 shrink-0">
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Actions</p>
                                             </div>
                                         </div>
@@ -925,6 +982,30 @@ export default function AdminDashboard({ auth }: any) {
                                                     </div>
                                                     <div className="w-24 shrink-0">
                                                         <p className="text-sm font-bold text-[#E05D36] text-right">${parseFloat(product.price).toFixed(2)}</p>
+                                                    </div>
+                                                    <div className="w-20 shrink-0 flex justify-center">
+                                                        <button
+                                                            onClick={() => {
+                                                                const formData = new FormData();
+                                                                formData.append('_method', 'PUT');
+                                                                formData.append('status', product.status === 'Available' ? 'Hidden' : 'Available');
+                                                                axios.post(`/api/products/${product.id}`, formData, {
+                                                                    headers: {
+                                                                        'Content-Type': 'multipart/form-data',
+                                                                    },
+                                                                })
+                                                                .then(() => {
+                                                                    setProducts(products.map(p => p.id === product.id ? { ...p, status: product.status === 'Available' ? 'Hidden' : 'Available' } : p));
+                                                                })
+                                                                .catch((error) => {
+                                                                    console.error('Error updating product visibility:', error);
+                                                                });
+                                                            }}
+                                                            className={`p-2 rounded-lg transition ${product.status === 'Available' ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                            title={product.status === 'Available' ? 'Visible (click to hide)' : 'Hidden (click to show)'}
+                                                        >
+                                                            {product.status === 'Available' ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                        </button>
                                                     </div>
                                                     <div className="w-20 shrink-0 flex gap-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
@@ -1045,6 +1126,9 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Base Price</p>
                                             </div>
                                             <div className="w-20 shrink-0">
+                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Visible</p>
+                                            </div>
+                                            <div className="w-20 shrink-0">
                                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Actions</p>
                                             </div>
                                         </div>
@@ -1072,6 +1156,30 @@ export default function AdminDashboard({ auth }: any) {
                                                     </div>
                                                     <div className="w-24 shrink-0">
                                                         <p className="text-sm font-bold text-[#E05D36] text-right">${parseFloat(product.price).toFixed(2)}</p>
+                                                    </div>
+                                                    <div className="w-20 shrink-0 flex justify-center">
+                                                        <button
+                                                            onClick={() => {
+                                                                const formData = new FormData();
+                                                                formData.append('_method', 'PUT');
+                                                                formData.append('status', product.status === 'Available' ? 'Hidden' : 'Available');
+                                                                axios.post(`/api/products/${product.id}`, formData, {
+                                                                    headers: {
+                                                                        'Content-Type': 'multipart/form-data',
+                                                                    },
+                                                                })
+                                                                .then(() => {
+                                                                    setProducts(products.map(p => p.id === product.id ? { ...p, status: product.status === 'Available' ? 'Hidden' : 'Available' } : p));
+                                                                })
+                                                                .catch((error) => {
+                                                                    console.error('Error updating product visibility:', error);
+                                                                });
+                                                            }}
+                                                            className={`p-2 rounded-lg transition ${product.status === 'Available' ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                                            title={product.status === 'Available' ? 'Visible (click to hide)' : 'Hidden (click to show)'}
+                                                        >
+                                                            {product.status === 'Available' ? <Eye size={14} /> : <EyeOff size={14} />}
+                                                        </button>
                                                     </div>
                                                     <div className="w-20 shrink-0 flex gap-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
