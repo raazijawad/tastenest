@@ -17,6 +17,9 @@ import {
     Mail,
     Users,
     Handshake,
+    Tags,
+    Package,
+    FileText,
 } from 'lucide-react';
 
 /* ─── tiny SVG area chart ─── */
@@ -90,6 +93,12 @@ export default function AdminDashboard({ auth }: any) {
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     ];
 
+    const navMenuManager = [
+        { id: 'category', label: 'Category', icon: <Tags size={18} /> },
+        { id: 'products', label: 'Products', icon: <Package size={18} /> },
+        { id: 'products-details', label: 'Products Details', icon: <FileText size={18} /> },
+    ];
+
     const navWorkspace = [
         { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
     ];
@@ -147,6 +156,26 @@ export default function AdminDashboard({ auth }: any) {
                                             {item.badge}
                                         </span>
                                     )}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Menu Manager section */}
+                        <p className="mt-5 mb-1.5 px-3 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Menu Manager</p>
+                        <div className="space-y-0.5">
+                            {navMenuManager.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveSection(item.id)}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all group ${activeSection === item.id
+                                            ? 'bg-gray-100 text-gray-900 font-medium'
+                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                        }`}
+                                >
+                                    <span className={activeSection === item.id ? 'text-gray-700' : 'text-gray-400 group-hover:text-gray-600'}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="flex-1 text-left">{item.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -301,6 +330,142 @@ export default function AdminDashboard({ auth }: any) {
                                                 <AreaChart color="#22c55e" data={chartData} />
                                             </div>
                                         </motion.div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Category ── */}
+                            {activeSection === 'category' && (
+                                <motion.div
+                                    key="category"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-xl font-bold text-gray-900">Category</h1>
+                                            <p className="text-sm text-gray-500 mt-0.5">Manage your menu categories</p>
+                                        </div>
+                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <Plus size={16} /> Add Category
+                                        </button>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
+                                                    <Tags size={16} className="text-[#E05D36]" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-gray-800">Category {i + 1}</p>
+                                                    <p className="text-xs text-gray-400">{10 + i * 5} products</p>
+                                                </div>
+                                                <span className="text-xs bg-green-50 text-green-600 px-2.5 py-1 rounded-full font-medium">Active</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Products ── */}
+                            {activeSection === 'products' && (
+                                <motion.div
+                                    key="products"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-xl font-bold text-gray-900">Products</h1>
+                                            <p className="text-sm text-gray-500 mt-0.5">Manage your menu items</p>
+                                        </div>
+                                        <button className="flex items-center gap-2 bg-[#E05D36] hover:bg-[#C8502D] text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                                            <Plus size={16} /> Add Product
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {[...Array(6)].map((_, i) => (
+                                            <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                                                <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                                    <Package size={40} className="text-gray-400" />
+                                                </div>
+                                                <div className="p-4">
+                                                    <p className="text-sm font-semibold text-gray-800">Product Item {i + 1}</p>
+                                                    <p className="text-xs text-gray-400 mt-1">Category {String.fromCharCode(65 + i)}</p>
+                                                    <div className="flex items-center justify-between mt-3">
+                                                        <span className="text-sm font-bold text-[#E05D36]">${(12.99 + i * 3).toFixed(2)}</span>
+                                                        <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">Available</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* ── Products Details ── */}
+                            {activeSection === 'products-details' && (
+                                <motion.div
+                                    key="products-details"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="space-y-5"
+                                >
+                                    <div>
+                                        <h1 className="text-xl font-bold text-gray-900">Products Details</h1>
+                                        <p className="text-sm text-gray-500 mt-0.5">Detailed product information and analytics</p>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl border border-gray-100 p-6">
+                                        <div className="flex items-start gap-4 mb-6">
+                                            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shrink-0">
+                                                <Package size={32} className="text-gray-400" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h2 className="text-lg font-bold text-gray-900">Artisan Burger Deluxe</h2>
+                                                <p className="text-sm text-gray-500 mt-1">Category: Main Course</p>
+                                                <div className="flex items-center gap-4 mt-2">
+                                                    <span className="text-lg font-bold text-[#E05D36]">$18.99</span>
+                                                    <span className="text-xs bg-green-50 text-green-600 px-2.5 py-1 rounded-full font-medium">Available</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t border-gray-100 pt-4">
+                                            <h3 className="text-sm font-semibold text-gray-800 mb-3">Description</h3>
+                                            <p className="text-sm text-gray-600 leading-relaxed">
+                                                Premium Angus beef patty with aged cheddar, caramelized onions, fresh lettuce, tomatoes, and our signature sauce on a brioche bun. Served with crispy fries.
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                                                <p className="text-xs text-gray-500">Orders Today</p>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">24</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                                                <p className="text-xs text-gray-500">Rating</p>
+                                                <p className="text-lg font-bold text-[#E05D36] mt-1">4.8★</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                                                <p className="text-xs text-gray-500">Prep Time</p>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">15 min</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-3 text-center">
+                                                <p className="text-xs text-gray-500">Calories</p>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">850</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}
