@@ -61,6 +61,13 @@ export default function ProductShow({ id }: Props) {
         ? product.addons
         : product?.addons ? JSON.parse(product.addons) : [];
 
+    // Auto-select first size option when product loads
+    useEffect(() => {
+        if (sizeOptions.length > 0 && !selectedSize) {
+            setSelectedSize(sizeOptions[0].size);
+        }
+    }, [sizeOptions]);
+
     // Calculate total price
     useEffect(() => {
         if (!product) return;
@@ -162,9 +169,7 @@ export default function ProductShow({ id }: Props) {
 
                             <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-1">
                                 <span className="text-2xl lg:text-3xl font-semibold text-white">${calculatedPrice.toFixed(2)}</span>
-                                {(selectedSize || selectedAddons.length > 0) && (
-                                    <span className="text-sm text-gray-500 line-through">${parseFloat(product.price).toFixed(2)}</span>
-                                )}
+                                {(selectedSize || selectedAddons.length > 0)}
                             </motion.div>
 
                             <motion.div variants={fadeInUp}>
@@ -186,10 +191,9 @@ export default function ProductShow({ id }: Props) {
                                                 <select
                                                     value={selectedSize}
                                                     onChange={(e) => setSelectedSize(e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-xs outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none"
+                                                    className="w-full bg-[#1a1c1e] border border-white/10 text-white px-3 py-2 text-xs outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none [&>option]:bg-[#1a1c1e] [&>option]:text-white"
                                                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E05D36'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '0.75rem' }}
                                                 >
-                                                    <option value="">Select a size</option>
                                                     {sizeOptions.map((option, index) => (
                                                         <option key={index} value={option.size}>
                                                             {option.size} - ${parseFloat(option.price).toFixed(2)}
