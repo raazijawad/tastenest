@@ -173,62 +173,69 @@ export default function ProductShow({ id }: Props) {
                                 </p>
                             </motion.div>
 
-                            {/* Size Options */}
-                            {sizeOptions.length > 0 && (
-                                <motion.div variants={fadeInUp} className="mb-6">
-                                    <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-3 block">
-                                        Size Options
-                                    </label>
-                                    <select
-                                        value={selectedSize}
-                                        onChange={(e) => setSelectedSize(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none"
-                                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E05D36'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}
-                                    >
-                                        <option value="">Select a size</option>
-                                        {sizeOptions.map((option, index) => (
-                                            <option key={index} value={option.size}>
-                                                {option.size} - ${parseFloat(option.price).toFixed(2)}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </motion.div>
-                            )}
-
-                            {/* Add-ons / Extras */}
-                            {addons.length > 0 && (
+                            {/* Size Options and Add-ons Grid */}
+                            {(sizeOptions.length > 0 || addons.length > 0) && (
                                 <motion.div variants={fadeInUp} className="mb-8">
-                                    <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-3 block">
-                                        Add-ons / Extras
-                                    </label>
-                                    <div className="space-y-2">
-                                        {addons.map((addon, index) => (
-                                            <label
-                                                key={index}
-                                                className="flex items-center justify-between p-3 border border-white/10 rounded-sm cursor-pointer hover:border-[#E05D36]/50 hover:bg-white/5 transition-all group"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedAddons.includes(addon.name)}
-                                                        onChange={(e) => {
-                                                            if (e.target.checked) {
-                                                                setSelectedAddons([...selectedAddons, addon.name]);
-                                                            } else {
-                                                                setSelectedAddons(selectedAddons.filter(name => name !== addon.name));
-                                                            }
-                                                        }}
-                                                        className="w-4 h-4 accent-[#E05D36] cursor-pointer"
-                                                    />
-                                                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                                                        {addon.name}
-                                                    </span>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Size Options */}
+                                        {sizeOptions.length > 0 && (
+                                            <div>
+                                                <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-2 block">
+                                                    Size Options
+                                                </label>
+                                                <select
+                                                    value={selectedSize}
+                                                    onChange={(e) => setSelectedSize(e.target.value)}
+                                                    className="w-full bg-white/5 border border-white/10 text-white px-3 py-2 text-xs outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none"
+                                                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E05D36'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '0.75rem' }}
+                                                >
+                                                    <option value="">Select a size</option>
+                                                    {sizeOptions.map((option, index) => (
+                                                        <option key={index} value={option.size}>
+                                                            {option.size} - ${parseFloat(option.price).toFixed(2)}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {/* Add-ons / Extras */}
+                                        {addons.length > 0 && (
+                                            <div>
+                                                <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-2 block">
+                                                    Add-ons / Extras
+                                                </label>
+                                                <div className="space-y-1.5">
+                                                    {addons.map((addon, index) => (
+                                                        <label
+                                                            key={index}
+                                                            className="flex items-center justify-between p-2 border border-white/10 rounded-sm cursor-pointer hover:border-[#E05D36]/50 hover:bg-white/5 transition-all group"
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedAddons.includes(addon.name)}
+                                                                    onChange={(e) => {
+                                                                        if (e.target.checked) {
+                                                                            setSelectedAddons([...selectedAddons, addon.name]);
+                                                                        } else {
+                                                                            setSelectedAddons(selectedAddons.filter(name => name !== addon.name));
+                                                                        }
+                                                                    }}
+                                                                    className="w-3.5 h-3.5 accent-[#E05D36] cursor-pointer"
+                                                                />
+                                                                <span className="text-xs text-gray-300 group-hover:text-white transition-colors">
+                                                                    {addon.name}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-xs text-[#E05D36] font-semibold">
+                                                                +${parseFloat(addon.price).toFixed(2)}
+                                                            </span>
+                                                        </label>
+                                                    ))}
                                                 </div>
-                                                <span className="text-sm text-[#E05D36] font-semibold">
-                                                    +${parseFloat(addon.price).toFixed(2)}
-                                                </span>
-                                            </label>
-                                        ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
