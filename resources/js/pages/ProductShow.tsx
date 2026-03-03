@@ -12,8 +12,18 @@ interface Product {
     description: string;
     image: string | null;
     status: string;
-    size_options?: string;
-    addons?: string;
+    size_options?: string | any[];
+    addons?: string | any[];
+}
+
+interface SizeOption {
+    size: string;
+    price: string;
+}
+
+interface Addon {
+    name: string;
+    price: string;
 }
 
 interface Props {
@@ -23,6 +33,9 @@ interface Props {
 export default function ProductShow({ id }: Props) {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+    const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -38,6 +51,40 @@ export default function ProductShow({ id }: Props) {
 
         fetchProduct();
     }, [id]);
+
+    // Parse size_options and addons from JSON string if needed
+    const sizeOptions: SizeOption[] = Array.isArray(product?.size_options) 
+        ? product.size_options 
+        : product?.size_options ? JSON.parse(product.size_options) : [];
+    
+    const addons: Addon[] = Array.isArray(product?.addons) 
+        ? product.addons 
+        : product?.addons ? JSON.parse(product.addons) : [];
+
+    // Calculate total price
+    useEffect(() => {
+        if (!product) return;
+
+        let total = parseFloat(product.price);
+
+        // Add size option price difference
+        if (selectedSize) {
+            const sizeOption = sizeOptions.find(opt => opt.size === selectedSize);
+            if (sizeOption) {
+                total = parseFloat(sizeOption.price);
+            }
+        }
+
+        // Add selected addons prices
+        selectedAddons.forEach(addonName => {
+            const addon = addons.find(a => a.name === addonName);
+            if (addon) {
+                total += parseFloat(addon.price);
+            }
+        });
+
+        setCalculatedPrice(total);
+    }, [product, selectedSize, selectedAddons, sizeOptions, addons]);
 
     const fadeInUp: Variants = {
         hidden: { opacity: 0, y: 50 },
@@ -114,13 +161,110 @@ export default function ProductShow({ id }: Props) {
                             </motion.h1>
 
                             <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-6">
-                                <span className="text-2xl lg:text-3xl font-semibold text-white">${parseFloat(product.price).toFixed(2)}</span>
+                                <span className="text-2xl lg:text-3xl font-semibold text-white">${calculatedPrice.toFixed(2)}</span>
+                                {(selectedSize || selectedAddons.length > 0) && (
+                                    <span className="text-sm text-gray-500 line-through">${parseFloat(product.price).toFixed(2)}</span>
+                                )}
                             </motion.div>
 
                             <motion.div variants={fadeInUp}>
                                 <p className="text-gray-400 text-base lg:text-lg leading-relaxed mb-8 border-l border-[#E05D36] pl-6 py-2">
                                     {product.description || 'No description available'}
                                 </p>
+                            </motion.div>
+
+                            {/* Size Options */}
+                            {sizeOptions.length > 0 && (
+                                <motion.div variants={fadeInUp} className="mb-6">
+                                    <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-3 block">
+                                        Size Options
+                                    </label>
+                                    <select
+                                        value={selectedSize}
+                                        onChange={(e) => setSelectedSize(e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none"
+                                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E05D36'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}
+                                    >
+                                        <option value="">Select a size</option>
+                                        {sizeOptions.map((option, index) => (
+                                            <option key={index} value={option.size}>
+                                                {option.size} - ${parseFloat(option.price).toFixed(2)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </motion.div>
+                            )}
+
+                            {/* Add-ons / Extras */}
+                            {addons.length > 0 && (
+                                <motion.div variants={fadeInUp} className="mb-8">
+                                    <label className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold mb-3 block">
+                                        Add-ons / Extras
+                                    </label>
+                                    <div className="space-y-2">
+                                        {addons.map((addon, index) => (
+                                            <label
+                                                key={index}
+                                                className="flex items-center justify-between p-3 border border-white/10 rounded-sm cursor-pointer hover:border-[#E05D36]/50 hover:bg-white/5 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedAddons.includes(addon.name)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedAddons([...selectedAddons, addon.name]);
+                                                            } else {
+                                                                setSelectedAddons(selectedAddons.filter(name => name !== addon.name));
+                                                            }
+                                                        }}
+                                                        className="w-4 h-4 accent-[#E05D36] cursor-pointer"
+                                                    />
+                                                    <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                                                        {addon.name}
+                                                    </span>
+                                                </div>
+                                                <span className="text-sm text-[#E05D36] font-semibold">
+                                                    +${parseFloat(addon.price).toFixed(2)}
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Calculated Total Price */}
+                            <motion.div variants={fadeInUp} className="mb-8 pb-8 border-b border-white/10">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs tracking-[0.2em] uppercase text-gray-400">Total Price</span>
+                                    <span className="text-3xl font-semibold text-[#E05D36]">${calculatedPrice.toFixed(2)}</span>
+                                </div>
+                                {(selectedSize || selectedAddons.length > 0) && (
+                                    <div className="mt-3 space-y-1 text-xs text-gray-500">
+                                        <div className="flex justify-between">
+                                            <span>Base Price</span>
+                                            <span>${parseFloat(product.price).toFixed(2)}</span>
+                                        </div>
+                                        {selectedSize && (() => {
+                                            const sizeOption = sizeOptions.find(opt => opt.size === selectedSize);
+                                            return sizeOption ? (
+                                                <div className="flex justify-between text-[#E05D36]">
+                                                    <span>Size: {selectedSize}</span>
+                                                    <span>${parseFloat(sizeOption.price).toFixed(2)}</span>
+                                                </div>
+                                            ) : null;
+                                        })()}
+                                        {selectedAddons.map(addonName => {
+                                            const addon = addons.find(a => a.name === addonName);
+                                            return addon ? (
+                                                <div key={addonName} className="flex justify-between text-[#E05D36]">
+                                                    <span>+ {addonName}</span>
+                                                    <span>+${parseFloat(addon.price).toFixed(2)}</span>
+                                                </div>
+                                            ) : null;
+                                        })}
+                                    </div>
+                                )}
                             </motion.div>
 
                             <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
