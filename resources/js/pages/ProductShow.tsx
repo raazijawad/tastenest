@@ -185,9 +185,9 @@ export default function ProductShow({ id }: Props) {
 
                 <div className="absolute inset-0 bg-noise opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-24">
+                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-12">
 
-                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mb-12">
+                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mt-12 mb-8">
                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-[#E05D36]" />
                         Back to Menu
                     </Link>
