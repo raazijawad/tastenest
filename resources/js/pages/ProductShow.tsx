@@ -53,12 +53,12 @@ export default function ProductShow({ id }: Props) {
     }, [id]);
 
     // Parse size_options and addons from JSON string if needed
-    const sizeOptions: SizeOption[] = Array.isArray(product?.size_options) 
-        ? product.size_options 
+    const sizeOptions: SizeOption[] = Array.isArray(product?.size_options)
+        ? product.size_options
         : product?.size_options ? JSON.parse(product.size_options) : [];
-    
-    const addons: Addon[] = Array.isArray(product?.addons) 
-        ? product.addons 
+
+    const addons: Addon[] = Array.isArray(product?.addons)
+        ? product.addons
         : product?.addons ? JSON.parse(product.addons) : [];
 
     // Calculate total price
@@ -149,7 +149,7 @@ export default function ProductShow({ id }: Props) {
                             variants={staggerContainer}
                             initial="hidden"
                             animate="show"
-                            className="flex flex-col justify-center lg:max-w-[70%] xl:max-w-[60%]"
+                            className="flex flex-col justify-center max-w-[80%]"
                         >
                             <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-4">
                                 <span className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold">{product.category}</span>
