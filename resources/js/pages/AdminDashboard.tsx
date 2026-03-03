@@ -584,11 +584,11 @@ export default function AdminDashboard({ auth }: any) {
                                                 </div>
 
                                                 <form>
-                                                    <div className="grid grid-cols-3 gap-8">
-                                                        <div className="col-span-2 space-y-5">
-                                                            <div className="grid grid-cols-2 gap-4">
+                                                    <div className="grid grid-cols-3 gap-6">
+                                                        <div className="col-span-2 space-y-4">
+                                                            <div className="grid grid-cols-2 gap-3">
                                                                 <div>
-                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
                                                                         Product Name
                                                                     </label>
                                                                     <input
@@ -596,19 +596,19 @@ export default function AdminDashboard({ auth }: any) {
                                                                         value={newProductName}
                                                                         onChange={(e) => setNewProductName(e.target.value)}
                                                                         placeholder="e.g., Artisan Burger"
-                                                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                         autoFocus
                                                                     />
                                                                 </div>
 
                                                                 <div>
-                                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
                                                                         Category
                                                                     </label>
                                                                     <select
                                                                         value={newProductCategory}
                                                                         onChange={(e) => setNewProductCategory(e.target.value)}
-                                                                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                     >
                                                                         <option value="">Select a category</option>
                                                                         {categories.map((cat) => (
@@ -619,7 +619,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             </div>
 
                                                             <div>
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
                                                                     Description
                                                                 </label>
                                                                 <textarea
@@ -627,7 +627,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                     onChange={(e) => setNewProductDescription(e.target.value)}
                                                                     placeholder="Brief description of this product"
                                                                     rows={3}
-                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm resize-none"
+                                                                    className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs resize-none"
                                                                 />
                                                             </div>
 
@@ -753,7 +753,7 @@ export default function AdminDashboard({ auth }: any) {
 
                                                         <div className="col-span-1 space-y-5">
                                                             <div>
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                                <label className="block text-xs font-medium text-gray-700 mb-1">
                                                                     Base Price ($)
                                                                 </label>
                                                                 <input
@@ -762,11 +762,11 @@ export default function AdminDashboard({ auth }: any) {
                                                                     value={newProductPrice}
                                                                     onChange={(e) => setNewProductPrice(e.target.value)}
                                                                     placeholder="e.g., 12.99"
-                                                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                    className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                 />
                                                             </div>
 
-                                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                            <label className="block text-xs font-medium text-gray-700 mb-1">
                                                                 Product Image
                                                             </label>
                                                             <div className="flex flex-col">
@@ -1198,10 +1198,10 @@ export default function AdminDashboard({ auth }: any) {
 
                                     <form>
                                         <div className="grid grid-cols-3 gap-8">
-                                            <div className="col-span-2 space-y-5">
-                                                <div className="grid grid-cols-2 gap-4">
+                                            <div className="col-span-2 space-y-4">
+                                                <div className="grid grid-cols-2 gap-3">
                                                     <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                        <label className="block text-xs font-medium text-gray-700 mb-1">
                                                             Product Name
                                                         </label>
                                                         <input
@@ -1209,19 +1209,19 @@ export default function AdminDashboard({ auth }: any) {
                                                             value={editProductName}
                                                             onChange={(e) => setEditProductName(e.target.value)}
                                                             placeholder="e.g., Artisan Burger"
-                                                            className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                            className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                             autoFocus
                                                         />
                                                     </div>
 
                                                     <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                        <label className="block text-xs font-medium text-gray-700 mb-1">
                                                             Category
                                                         </label>
                                                         <select
                                                             value={editProductCategory}
                                                             onChange={(e) => setEditProductCategory(e.target.value)}
-                                                            className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                            className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                         >
                                                             <option value="">Select a category</option>
                                                             {categories.map((cat) => (
@@ -1232,7 +1232,7 @@ export default function AdminDashboard({ auth }: any) {
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
                                                         Description
                                                     </label>
                                                     <textarea
@@ -1240,7 +1240,7 @@ export default function AdminDashboard({ auth }: any) {
                                                         onChange={(e) => setEditProductDescription(e.target.value)}
                                                         placeholder="Brief description of this product"
                                                         rows={3}
-                                                        className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base resize-none"
+                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs resize-none"
                                                     />
                                                 </div>
 
@@ -1366,7 +1366,7 @@ export default function AdminDashboard({ auth }: any) {
 
                                             <div className="col-span-1 space-y-5">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
                                                         Base Price ($)
                                                     </label>
                                                     <input
@@ -1375,11 +1375,11 @@ export default function AdminDashboard({ auth }: any) {
                                                         value={editProductPrice}
                                                         onChange={(e) => setEditProductPrice(e.target.value)}
                                                         placeholder="e.g., 12.99"
-                                                        className="w-full px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                     />
                                                 </div>
 
-                                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                <label className="block text-xs font-medium text-gray-700 mb-1">
                                                     Product Image
                                                 </label>
                                                 <div className="flex flex-col">
