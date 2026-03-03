@@ -206,9 +206,9 @@ export default function AdminDashboard({ auth }: any) {
                                         {item.icon}
                                     </span>
                                     <span className="flex-1 text-left">{item.label}</span>
-                                    {item.badge && (
+                                    {(item as any).badge && (
                                         <span className="ml-auto bg-gray-200 text-gray-700 text-[10px] font-semibold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-                                            {item.badge}
+                                            {(item as any).badge}
                                         </span>
                                     )}
                                 </button>
@@ -655,7 +655,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     newOptions[index].size = e.target.value;
                                                                                     setSizeOptions(newOptions);
                                                                                 }}
-                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                             >
                                                                                 <option value="">Select Size</option>
                                                                                 <option value="Small">Small</option>
@@ -672,7 +672,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     setSizeOptions(newOptions);
                                                                                 }}
                                                                                 placeholder="Price"
-                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                             />
                                                                             <button
                                                                                 type="button"
@@ -680,9 +680,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     const newOptions = sizeOptions.filter((_, i) => i !== index);
                                                                                     setSizeOptions(newOptions);
                                                                                 }}
-                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                             >
-                                                                                <Plus size={16} className="rotate-45" />
+                                                                                <Plus size={14} className="rotate-45" />
                                                                             </button>
                                                                         </div>
                                                                     ))}
@@ -718,7 +718,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     setAddons(newAddons);
                                                                                 }}
                                                                                 placeholder="e.g., Extra Cheese"
-                                                                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                             />
                                                                             <input
                                                                                 type="number"
@@ -730,7 +730,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     setAddons(newAddons);
                                                                                 }}
                                                                                 placeholder="Price"
-                                                                                className="w-28 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-sm"
+                                                                                className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                             />
                                                                             <button
                                                                                 type="button"
@@ -738,9 +738,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                                     const newAddons = addons.filter((_, i) => i !== index);
                                                                                     setAddons(newAddons);
                                                                                 }}
-                                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                             >
-                                                                                <Plus size={16} className="rotate-45" />
+                                                                                <Plus size={14} className="rotate-45" />
                                                                             </button>
                                                                         </div>
                                                                     ))}
@@ -1268,7 +1268,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         newOptions[index].size = e.target.value;
                                                                         setEditSizeOptions(newOptions);
                                                                     }}
-                                                                    className="flex-1 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                 >
                                                                     <option value="">Select Size</option>
                                                                     <option value="Small">Small</option>
@@ -1285,7 +1285,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setEditSizeOptions(newOptions);
                                                                     }}
                                                                     placeholder="Price"
-                                                                    className="w-28 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                 />
                                                                 <button
                                                                     type="button"
@@ -1293,9 +1293,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                         const newOptions = editSizeOptions.filter((_, i) => i !== index);
                                                                         setEditSizeOptions(newOptions);
                                                                     }}
-                                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                 >
-                                                                    <Plus size={16} className="rotate-45" />
+                                                                    <Plus size={14} className="rotate-45" />
                                                                 </button>
                                                             </div>
                                                         ))}
@@ -1331,7 +1331,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setEditAddons(newAddons);
                                                                     }}
                                                                     placeholder="e.g., Extra Cheese"
-                                                                    className="flex-1 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                 />
                                                                 <input
                                                                     type="number"
@@ -1343,7 +1343,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setEditAddons(newAddons);
                                                                     }}
                                                                     placeholder="Price"
-                                                                    className="w-28 px-5 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-base"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
                                                                 />
                                                                 <button
                                                                     type="button"
@@ -1351,9 +1351,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                         const newAddons = editAddons.filter((_, i) => i !== index);
                                                                         setEditAddons(newAddons);
                                                                     }}
-                                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                 >
-                                                                    <Plus size={16} className="rotate-45" />
+                                                                    <Plus size={14} className="rotate-45" />
                                                                 </button>
                                                             </div>
                                                         ))}
