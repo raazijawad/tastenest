@@ -1,171 +1,43 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion, Variants } from 'framer-motion';
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '@/Components/Layout';
+import axios from 'axios';
 
-const dishes = [
-    {
-        id: 1,
-        title: "Classic Burger",
-        name: "Classic Burger",
-        category: "Burgers",
-        price: "$18.00",
-        oldPrice: "$22.00",
-        time: "12 mins",
-        serves: "1-2",
-        description: "Dry-aged beef blend, house brioche, signature sauce, aged cheddar",
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 2,
-        title: "Cheese Burger",
-        name: "Cheese Burger",
-        category: "Burgers",
-        price: "$17.50",
-        oldPrice: "$20.50",
-        time: "10 mins",
-        serves: "1-2",
-        description: "Melted cheddar, crispy lettuce, tomato, caramelized onions, house sauce",
-        image: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 3,
-        title: "Crispy Burger",
-        name: "Crispy Burger",
-        category: "Burgers",
-        price: "$19.50",
-        oldPrice: "$24.50",
-        time: "14 mins",
-        serves: "1-2",
-        description: "Double fried patty, jalapeños, pepper jack, crispy onion strings",
-        image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop",
-        spicy: true
-    },
-    {
-        id: 4,
-        title: "Truffle Luxe Burger",
-        name: "Truffle Luxe Burger",
-        category: "Burgers",
-        price: "$24.00",
-        oldPrice: "$32.00",
-        time: "15 mins",
-        serves: "2",
-        description: "Black truffle aioli, wagyu beef, foie gras, aged gruyère, microgreens",
-        image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 5,
-        title: "Chicken Pasta",
-        name: "Chicken Pasta",
-        category: "Pasta",
-        price: "$16.00",
-        oldPrice: "$19.00",
-        time: "18 mins",
-        serves: "1-2",
-        description: "Grilled chicken breast, linguine, garlic butter, parmesan crisps",
-        image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 6,
-        title: "Beef Pasta",
-        name: "Beef Pasta",
-        category: "Pasta",
-        price: "$18.50",
-        oldPrice: "$22.50",
-        time: "20 mins",
-        serves: "2",
-        description: "Argentinian beef ragù, pappardelle, truffle oil, aged parmesan",
-        image: "https://images.unsplash.com/photo-1603071051911-33f1b1b7a5d6?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 7,
-        title: "Spicy Arrabbiata",
-        name: "Spicy Arrabbiata",
-        category: "Pasta",
-        price: "$14.00",
-        oldPrice: "$17.00",
-        time: "16 mins",
-        serves: "1-2",
-        description: "Chili flakes, guanciale, tomatoes, pecorino romano, fresh pasta",
-        image: "https://images.unsplash.com/photo-1612874742237-6526221fcf16?q=80&w=1000&auto=format&fit=crop",
-        spicy: true
-    },
-    {
-        id: 8,
-        title: "Creamy Alfredo",
-        name: "Creamy Alfredo",
-        category: "Pasta",
-        price: "$15.00",
-        oldPrice: "$18.50",
-        time: "17 mins",
-        serves: "1-2",
-        description: "Fettuccine, aged gruyère, butter, white wine, cracked black pepper",
-        image: "https://images.unsplash.com/photo-1645112917141-540bc8acbbec?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 9,
-        title: "Crispy Fries",
-        name: "Crispy Fries",
-        category: "Sides",
-        price: "$6.00",
-        oldPrice: "$8.00",
-        time: "8 mins",
-        serves: "2-3",
-        description: "Hand-cut, double-fried, truffle salt & house sauce",
-        image: "https://images.unsplash.com/photo-1585238341710-57acf2997b67?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    },
-    {
-        id: 10,
-        title: "Charred Jalapeño Poppers",
-        name: "Charred Jalapeño Poppers",
-        category: "Sides",
-        price: "$8.00",
-        oldPrice: "$10.50",
-        time: "10 mins",
-        serves: "2-3",
-        description: "Cream cheese stuffed, crispy panko, cooling ranch dip",
-        image: "https://images.unsplash.com/photo-1609501676725-7186f017a4b5?q=80&w=1000&auto=format&fit=crop",
-        spicy: true
-    },
-    {
-        id: 11,
-        title: "Classic Milkshake",
-        name: "Classic Milkshake",
-        category: "Beverages",
-        price: "$5.50",
-        oldPrice: "$7.00",
-        time: "5 mins",
-        serves: "1",
-        description: "Vanilla, Chocolate, Strawberry - 16oz premium shake",
-        image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=1000&auto=format&fit=crop",
-        spicy: false
-    }
-];
+interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: string;
+    description: string;
+    image: string | null;
+    status: string;
+    size_options?: string;
+    addons?: string;
+}
 
 interface Props {
     id: string;
 }
 
 export default function ProductShow({ id }: Props) {
-    const dish = useMemo(() => dishes.find(d => d.id.toString() === id.toString()), [id]);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    if (!dish) {
-        return (
-            <Layout>
-                <div className="min-h-screen bg-[#111315] text-white flex items-center justify-center flex-col">
-                    <h1 className="text-4xl font-serif text-[#E05D36] mb-4">Dish Not Found</h1>
-                    <Link href="/menu" className="text-xs tracking-[0.2em] uppercase hover:text-[#E05D36] transition-colors">Return to Menu</Link>
-                </div>
-            </Layout>
-        );
-    }
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await axios.get(`/api/products/${id}`);
+                setProduct(response.data);
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
 
     const fadeInUp: Variants = {
         hidden: { opacity: 0, y: 50 },
@@ -177,39 +49,55 @@ export default function ProductShow({ id }: Props) {
         show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
     };
 
+    if (loading) {
+        return (
+            <Layout>
+                <div className="min-h-screen bg-[#111315] text-white flex items-center justify-center flex-col">
+                    <div className="text-gray-400 text-sm">Loading...</div>
+                </div>
+            </Layout>
+        );
+    }
+
+    if (!product || product.status !== 'Available') {
+        return (
+            <Layout>
+                <div className="min-h-screen bg-[#111315] text-white flex items-center justify-center flex-col">
+                    <h1 className="text-4xl font-serif text-[#E05D36] mb-4">Product Not Found</h1>
+                    <Link href="/menu" className="text-xs tracking-[0.2em] uppercase hover:text-[#E05D36] transition-colors">Return to Menu</Link>
+                </div>
+            </Layout>
+        );
+    }
+
     return (
         <Layout>
-            <Head title={`${dish.title} - TasteNest`} />
+            <Head title={`${product.name} - TasteNest`} />
 
             <div className="relative min-h-screen w-full bg-[#111315] text-white overflow-hidden">
-
-                <div className="absolute inset-0 bg-noise opacity-30 pointer-events-none" />
-
-                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-12">
-
-                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mt-12 mb-8">
+                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-24">
+                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mb-12">
                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-[#E05D36]" />
                         Back to Menu
                     </Link>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-add  items-center">
-
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         {/* IMAGE */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="relative aspect-square w-full lg:w-[75%]  mx-auto rounded-sm overflow-hidden border border-white/5 shadow-2xl"
+                            className="relative aspect-square w-full lg:w-[75%] mx-auto rounded-sm overflow-hidden border border-white/5 shadow-2xl"
                         >
                             <motion.img
                                 initial={{ scale: 1.1 }}
                                 animate={{ scale: 1 }}
-                                src={dish.image}
-                                alt={dish.name}
+                                src={product.image ? `/storage/${product.image}` : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop'}
+                                alt={product.name}
                                 className="w-full h-full object-cover"
                             />
                         </motion.div>
 
-                        {/* RIGHT SIDE — SHRUNK */}
+                        {/* RIGHT SIDE */}
                         <motion.div
                             variants={staggerContainer}
                             initial="hidden"
@@ -217,43 +105,30 @@ export default function ProductShow({ id }: Props) {
                             className="flex flex-col justify-center lg:max-w-[70%] xl:max-w-[60%]"
                         >
                             <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-4">
-                                <span className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold">{dish.category}</span>
+                                <span className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold">{product.category}</span>
                                 <div className="h-[1px] w-10 bg-white/20" />
                             </motion.div>
 
                             <motion.h1 variants={fadeInUp} className="text-4xl lg:text-5xl font-serif leading-none tracking-tight mb-4">
-                                {dish.title}
+                                {product.name}
                             </motion.h1>
 
                             <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-6">
-                                <span className="text-2xl lg:text-3xl font-semibold text-white">{dish.price}</span>
-                                <span className="text-base text-gray-500 line-through">{dish.oldPrice}</span>
+                                <span className="text-2xl lg:text-3xl font-semibold text-white">${parseFloat(product.price).toFixed(2)}</span>
                             </motion.div>
 
                             <motion.div variants={fadeInUp}>
                                 <p className="text-gray-400 text-base lg:text-lg leading-relaxed mb-8 border-l border-[#E05D36] pl-6 py-2">
-                                    {dish.description}
+                                    {product.description || 'No description available'}
                                 </p>
                             </motion.div>
 
-                            <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-6 mb-10 py-2 border-y border-white/5">
-                                <div>
-                                    <h4 className="text-[10px] tracking-[0.2em] text-gray-500 uppercase mb-2">Preparation Time</h4>
-                                    <p className="text-lg lg:text-xl font-serif">{dish.time}</p>
-                                </div>
-
-                                <div>
-                                    <h4 className="text-[10px] tracking-[0.2em] text-gray-500 uppercase mb-2">Serves</h4>
-                                    <p className="text-lg lg:text-xl font-serif">{dish.serves}</p>
-                                </div>
-                            </motion.div>
-
                             <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
-                                <button className="bg-[#E05D36] text-white px-8 py-2 text-xs tracking-[0.2em] font-semibold uppercase flex-1">
+                                <button className="bg-[#E05D36] text-white px-8 py-2 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:bg-[#C8502D] transition-colors">
                                     Add to Order
                                 </button>
 
-                                <button className="border border-white/20 text-white px-8 py-4 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:border-white">
+                                <button className="border border-white/20 text-white px-8 py-4 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:border-white transition-colors">
                                     Customize
                                 </button>
                             </motion.div>
@@ -261,13 +136,12 @@ export default function ProductShow({ id }: Props) {
                     </div>
                 </div>
 
-                {/* Footer Section - Minimal & Structural */}
+                {/* Footer Section */}
                 <footer className="relative w-full bg-[#111315] pt-20 pb-10 px-6 lg:px-12 border-t border-white/5 font-sans selection:bg-[#E05D36]/30">
                     <div className="absolute inset-0 z-0 bg-noise opacity-20 mix-blend-overlay pointer-events-none" />
 
                     <div className="relative z-10 max-w-6xl mx-auto">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8 mb-16">
-
                             {/* Brand Column */}
                             <div className="col-span-1 md:col-span-1 flex flex-col">
                                 <div className="font-serif text-xl tracking-[0.15em] font-bold text-white uppercase mb-6 flex items-center gap-2">
@@ -277,7 +151,7 @@ export default function ProductShow({ id }: Props) {
                                     TasteNest
                                 </div>
                                 <p className="text-gray-400 text-xs leading-loose font-light max-w-[250px] text-justify">
-                                    Lorem ipsum dolor sit amet consectetur. Tristique cursus morbi nibh nec et vulputate. Turpis tortor nisi imperdiet quis accumsan. Ligula netus amet leo ultricies. Neque venenatis magnis amet eget sagittis leo enim.
+                                    Lorem ipsum dolor sit amet consectetur. Tristique cursus morbi nibh nec et vulputate. Turpis tortor nisi imperdiet quis accumsan.
                                 </p>
                                 <div className="flex gap-4 mt-8">
                                     {[
