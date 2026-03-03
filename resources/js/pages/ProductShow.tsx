@@ -122,8 +122,8 @@ export default function ProductShow({ id }: Props) {
             <Head title={`${product.name} - TasteNest`} />
 
             <div className="relative min-h-screen w-full bg-[#111315] text-white overflow-hidden">
-                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-24">
-                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mb-12">
+                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-16">
+                    <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mb-6">
                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-[#E05D36]" />
                         Back to Menu
                     </Link>
@@ -151,16 +151,16 @@ export default function ProductShow({ id }: Props) {
                             animate="show"
                             className="flex flex-col justify-center max-w-[80%]"
                         >
-                            <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-4">
+                            <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-2F">
                                 <span className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold">{product.category}</span>
                                 <div className="h-[1px] w-10 bg-white/20" />
                             </motion.div>
 
-                            <motion.h1 variants={fadeInUp} className="text-4xl lg:text-5xl font-serif leading-none tracking-tight mb-4">
+                            <motion.h1 variants={fadeInUp} className="text-3xl lg:text-5xl font-serif leading-none tracking-tight mb-2 mt-2">
                                 {product.name}
                             </motion.h1>
 
-                            <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-6">
+                            <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-1">
                                 <span className="text-2xl lg:text-3xl font-semibold text-white">${calculatedPrice.toFixed(2)}</span>
                                 {(selectedSize || selectedAddons.length > 0) && (
                                     <span className="text-sm text-gray-500 line-through">${parseFloat(product.price).toFixed(2)}</span>
@@ -168,14 +168,14 @@ export default function ProductShow({ id }: Props) {
                             </motion.div>
 
                             <motion.div variants={fadeInUp}>
-                                <p className="text-gray-400 text-base lg:text-lg leading-relaxed mb-8 border-l border-[#E05D36] pl-6 py-2">
+                                <p className="text-gray-400 text-base lg:text-sm leading-relaxed mb-4 border-l border-[#E05D36] pl-6 py-2">
                                     {product.description || 'No description available'}
                                 </p>
                             </motion.div>
 
                             {/* Size Options and Add-ons Grid */}
                             {(sizeOptions.length > 0 || addons.length > 0) && (
-                                <motion.div variants={fadeInUp} className="mb-8">
+                                <motion.div variants={fadeInUp} className="mb-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {/* Size Options */}
                                         {sizeOptions.length > 0 && (
@@ -241,13 +241,13 @@ export default function ProductShow({ id }: Props) {
                             )}
 
                             {/* Calculated Total Price */}
-                            <motion.div variants={fadeInUp} className="mb-8 pb-8 border-b border-white/10">
+                            <motion.div variants={fadeInUp} className="mb-4 pb-4 border-b border-white/10">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs tracking-[0.2em] uppercase text-gray-400">Total Price</span>
                                     <span className="text-3xl font-semibold text-[#E05D36]">${calculatedPrice.toFixed(2)}</span>
                                 </div>
                                 {(selectedSize || selectedAddons.length > 0) && (
-                                    <div className="mt-3 space-y-1 text-xs text-gray-500">
+                                    <div className="mt-1 space-y-1 text-xs text-gray-500">
                                         <div className="flex justify-between">
                                             <span>Base Price</span>
                                             <span>${parseFloat(product.price).toFixed(2)}</span>

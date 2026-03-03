@@ -29,7 +29,7 @@ export default function Navbar() {
             variants={staggeredContainer}
             initial="hidden"
             animate="show"
-            className="absolute top-0 inset-x-0 z-40 px-6 py-6 lg:px-12 lg:py-8 flex justify-between items-center"
+            className="absolute top-0 inset-x-0 z-40 px-6 py-6 lg:px-12 lg:py-4 flex justify-between items-center"
         >
             {/* Logo */}
             <motion.div variants={navItemVariants} className="flex items-center space-x-2 cursor-pointer">
