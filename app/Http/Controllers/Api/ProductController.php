@@ -77,7 +77,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
-        
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'category' => 'sometimes|required|string',
@@ -85,6 +85,8 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'status' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'size_options' => 'nullable|string',
+            'addons' => 'nullable|string',
         ]);
 
         if ($request->hasFile('image')) {
@@ -93,6 +95,16 @@ class ProductController extends Controller
                 \Storage::disk('public')->delete($product->image);
             }
             $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        // Handle size_options
+        if (isset($validated['size_options'])) {
+            $validated['size_options'] = json_decode($validated['size_options'], true);
+        }
+
+        // Handle addons
+        if (isset($validated['addons'])) {
+            $validated['addons'] = json_decode($validated['addons'], true);
         }
 
         $product->update($validated);

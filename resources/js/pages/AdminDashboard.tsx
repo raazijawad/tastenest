@@ -967,16 +967,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                 setEditProductCategory(product.category || '');
                                                                 setEditProductDescription(product.description || '');
                                                                 setEditImagePreview(product.image ? `/storage/${product.image}` : null);
-                                                                try {
-                                                                    setEditSizeOptions(product.size_options ? JSON.parse(product.size_options) : []);
-                                                                } catch {
-                                                                    setEditSizeOptions([]);
-                                                                }
-                                                                try {
-                                                                    setEditAddons(product.addons ? JSON.parse(product.addons) : []);
-                                                                } catch {
-                                                                    setEditAddons([]);
-                                                                }
+                                                                // size_options and addons are already arrays from Laravel's JSON cast
+                                                                setEditSizeOptions(Array.isArray(product.size_options) ? product.size_options : []);
+                                                                setEditAddons(Array.isArray(product.addons) ? product.addons : []);
                                                                 setShowEditProduct(true);
                                                             }}
                                                             className="p-2 text-gray-400 hover:text-[#E05D36] hover:bg-gray-100 rounded-lg transition"
@@ -1143,16 +1136,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                 setEditProductCategory(product.category || '');
                                                                 setEditProductDescription(product.description || '');
                                                                 setEditImagePreview(product.image ? `/storage/${product.image}` : null);
-                                                                try {
-                                                                    setEditSizeOptions(product.size_options ? JSON.parse(product.size_options) : []);
-                                                                } catch {
-                                                                    setEditSizeOptions([]);
-                                                                }
-                                                                try {
-                                                                    setEditAddons(product.addons ? JSON.parse(product.addons) : []);
-                                                                } catch {
-                                                                    setEditAddons([]);
-                                                                }
+                                                                // size_options and addons are already arrays from Laravel's JSON cast
+                                                                setEditSizeOptions(Array.isArray(product.size_options) ? product.size_options : []);
+                                                                setEditAddons(Array.isArray(product.addons) ? product.addons : []);
                                                                 setShowEditProduct(true);
                                                             }}
                                                             className="p-2 text-gray-400 hover:text-[#E05D36] hover:bg-gray-100 rounded-lg transition"
