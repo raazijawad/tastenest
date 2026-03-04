@@ -119,6 +119,16 @@ export default function AdminDashboard({ auth }: any) {
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
+    const [editSizeOptionsDetails, setEditSizeOptionsDetails] = useState<{ size: string; price: string; enabled: boolean }[]>([]);
+    const [editAddonsDetails, setEditAddonsDetails] = useState<{ name: string; price: string; enabled: boolean }[]>([]);
+    const [showEditProductDetails, setShowEditProductDetails] = useState(false);
+    const [editingProductDetails, setEditingProductDetails] = useState<any>(null);
+    const [editProductNameDetails, setEditProductNameDetails] = useState('');
+    const [editProductPriceDetails, setEditProductPriceDetails] = useState('');
+    const [editProductCategoryDetails, setEditProductCategoryDetails] = useState('');
+    const [editProductDescriptionDetails, setEditProductDescriptionDetails] = useState('');
+    const [editProductImageDetails, setEditProductImageDetails] = useState<File | null>(null);
+    const [editImagePreviewDetails, setEditImagePreviewDetails] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -1130,16 +1140,17 @@ export default function AdminDashboard({ auth }: any) {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                setEditingProduct(product);
-                                                                setEditProductName(product.name);
-                                                                setEditProductPrice(product.price);
-                                                                setEditProductCategory(product.category || '');
-                                                                setEditProductDescription(product.description || '');
-                                                                setEditImagePreview(product.image ? `/storage/${product.image}` : null);
-                                                                // size_options and addons are already arrays from Laravel's JSON cast
-                                                                setEditSizeOptions(Array.isArray(product.size_options) ? product.size_options : []);
-                                                                setEditAddons(Array.isArray(product.addons) ? product.addons : []);
-                                                                setShowEditProduct(true);
+                                                                setEditingProductDetails(product);
+                                                                setEditProductNameDetails(product.name);
+                                                                setEditProductPriceDetails(product.price);
+                                                                setEditProductCategoryDetails(product.category || '');
+                                                                setEditProductDescriptionDetails(product.description || '');
+                                                                setEditImagePreviewDetails(product.image ? `/storage/${product.image}` : null);
+                                                                const sizeOpts = Array.isArray(product.size_options) ? product.size_options : [];
+                                                                const addonOpts = Array.isArray(product.addons) ? product.addons : [];
+                                                                setEditSizeOptionsDetails(sizeOpts.map((opt: any) => ({ ...opt, enabled: true })));
+                                                                setEditAddonsDetails(addonOpts.map((opt: any) => ({ ...opt, enabled: true })));
+                                                                setShowEditProductDetails(true);
                                                             }}
                                                             className="p-2 text-gray-400 hover:text-[#E05D36] hover:bg-gray-100 rounded-lg transition"
                                                         >
@@ -1484,6 +1495,344 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditAddons([]);
                                                             setEditingProduct(null);
                                                             setShowEditProduct(false);
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error('Error updating product:', error);
+                                                        });
+                                                    }
+                                                }}
+                                                className="flex-1 px-4 py-2.5 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition"
+                                            >
+                                                Update Product
+                                            </button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            </motion.div>
+                        )}
+
+                        {/* Edit Product Details Modal - With Toggle Switches */}
+                        {showEditProductDetails && editingProductDetails && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                                onClick={() => setShowEditProductDetails(false)}
+                            >
+                                <motion.div
+                                    initial={{ scale: 0.95, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.95, opacity: 0 }}
+                                    className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 max-h-[90vh] overflow-y-auto"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h2 className="text-lg font-bold text-gray-900">Edit Product Details</h2>
+                                        <button
+                                            onClick={() => setShowEditProductDetails(false)}
+                                            className="text-gray-400 hover:text-gray-600 transition"
+                                        >
+                                            <Plus size={20} className="rotate-45" />
+                                        </button>
+                                    </div>
+
+                                    <form>
+                                        <div className="grid grid-cols-3 gap-8">
+                                            <div className="col-span-2 space-y-4">
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                            Product Name
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={editProductNameDetails}
+                                                            onChange={(e) => setEditProductNameDetails(e.target.value)}
+                                                            placeholder="e.g., Artisan Burger"
+                                                            className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                            autoFocus
+                                                        />
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                            Category
+                                                        </label>
+                                                        <select
+                                                            value={editProductCategoryDetails}
+                                                            onChange={(e) => setEditProductCategoryDetails(e.target.value)}
+                                                            className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                        >
+                                                            <option value="">Select a category</option>
+                                                            {categories.map((cat) => (
+                                                                <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                        Description
+                                                    </label>
+                                                    <textarea
+                                                        value={editProductDescriptionDetails}
+                                                        onChange={(e) => setEditProductDescriptionDetails(e.target.value)}
+                                                        placeholder="Brief description of this product"
+                                                        rows={3}
+                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs resize-none"
+                                                    />
+                                                </div>
+
+                                                {/* Size Options with Toggle Switches */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            Size Options
+                                                        </label>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }])}
+                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                        >
+                                                            <Plus size={14} /> Add Size
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {editSizeOptionsDetails.map((option, index) => (
+                                                            <div key={index} className="flex gap-2 items-center">
+                                                                <select
+                                                                    value={option.size}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editSizeOptionsDetails];
+                                                                        newOptions[index].size = e.target.value;
+                                                                        setEditSizeOptionsDetails(newOptions);
+                                                                    }}
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                >
+                                                                    <option value="">Select Size</option>
+                                                                    <option value="Small">Small</option>
+                                                                    <option value="Medium">Medium</option>
+                                                                    <option value="Large">Large</option>
+                                                                </select>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.price}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editSizeOptionsDetails];
+                                                                        newOptions[index].price = e.target.value;
+                                                                        setEditSizeOptionsDetails(newOptions);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={option.enabled}
+                                                                        onChange={() => {
+                                                                            const newOptions = [...editSizeOptionsDetails];
+                                                                            newOptions[index].enabled = !newOptions[index].enabled;
+                                                                            setEditSizeOptionsDetails(newOptions);
+                                                                        }}
+                                                                        className="sr-only peer"
+                                                                    />
+                                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#E05D36]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E05D36]"></div>
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editSizeOptionsDetails.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                    )}
+                                                </div>
+
+                                                {/* Add-ons with Toggle Switches */}
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            Add-ons / Extras
+                                                        </label>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setEditAddonsDetails([...editAddonsDetails, { name: '', price: '', enabled: true }])}
+                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                        >
+                                                            <Plus size={14} /> Add Extra
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {editAddonsDetails.map((addon, index) => (
+                                                            <div key={index} className="flex gap-2 items-center">
+                                                                <input
+                                                                    type="text"
+                                                                    value={addon.name}
+                                                                    onChange={(e) => {
+                                                                        const newAddons = [...editAddonsDetails];
+                                                                        newAddons[index].name = e.target.value;
+                                                                        setEditAddonsDetails(newAddons);
+                                                                    }}
+                                                                    placeholder="e.g., Extra Cheese"
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={addon.price}
+                                                                    onChange={(e) => {
+                                                                        const newAddons = [...editAddonsDetails];
+                                                                        newAddons[index].price = e.target.value;
+                                                                        setEditAddonsDetails(newAddons);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={addon.enabled}
+                                                                        onChange={() => {
+                                                                            const newAddons = [...editAddonsDetails];
+                                                                            newAddons[index].enabled = !newAddons[index].enabled;
+                                                                            setEditAddonsDetails(newAddons);
+                                                                        }}
+                                                                        className="sr-only peer"
+                                                                    />
+                                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#E05D36]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E05D36]"></div>
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editAddonsDetails.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No add-ons added</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="col-span-1 space-y-5">
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                        Base Price ($)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        value={editProductPriceDetails}
+                                                        onChange={(e) => setEditProductPriceDetails(e.target.value)}
+                                                        placeholder="e.g., 12.99"
+                                                        className="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                    />
+                                                </div>
+
+                                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                                    Product Image
+                                                </label>
+                                                <div className="flex flex-col">
+                                                    {editImagePreviewDetails ? (
+                                                        <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200 mb-3">
+                                                            <img
+                                                                src={editImagePreviewDetails}
+                                                                alt="Preview"
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center mb-3 bg-gray-50">
+                                                            <Package size={40} className="text-gray-400 mb-2" />
+                                                            <span className="text-sm text-gray-500 text-center px-4">
+                                                                Drag and drop or click to upload
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <label className="w-full cursor-pointer">
+                                                        <div className="flex items-center justify-center px-4 py-3 bg-[#E05D36] hover:bg-[#C8502D] text-white rounded-lg text-sm font-medium transition">
+                                                            <Package size={18} className="mr-2" />
+                                                            {editImagePreviewDetails ? 'Change Image' : 'Upload Image'}
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    setEditProductImageDetails(file);
+                                                                    const reader = new FileReader();
+                                                                    reader.onloadend = () => {
+                                                                        setEditImagePreviewDetails(reader.result as string);
+                                                                    };
+                                                                    reader.readAsDataURL(file);
+                                                                }
+                                                            }}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                    {editImagePreviewDetails && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setEditProductImageDetails(null);
+                                                                setEditImagePreviewDetails(null);
+                                                            }}
+                                                            className="w-full mt-2 px-4 py-3 border border-red-200 text-red-500 hover:bg-red-50 rounded-lg text-sm font-medium transition"
+                                                        >
+                                                            Remove Image
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-3 pt-4 mt-6 border-t border-gray-100">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowEditProductDetails(false)}
+                                                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    if (editProductNameDetails.trim() && editProductPriceDetails && editingProductDetails) {
+                                                        const formData = new FormData();
+                                                        formData.append('_method', 'PUT');
+                                                        formData.append('name', editProductNameDetails);
+                                                        formData.append('category', editProductCategoryDetails || 'Uncategorized');
+                                                        formData.append('price', editProductPriceDetails);
+                                                        formData.append('description', editProductDescriptionDetails);
+                                                        formData.append('status', editingProductDetails.status);
+                                                        const enabledSizeOptions = editSizeOptionsDetails.filter(opt => opt.enabled);
+                                                        const enabledAddons = editAddonsDetails.filter(opt => opt.enabled);
+                                                        if (enabledSizeOptions.length > 0) {
+                                                            formData.append('size_options', JSON.stringify(enabledSizeOptions.map(({ size, price }) => ({ size, price }))));
+                                                        }
+                                                        if (enabledAddons.length > 0) {
+                                                            formData.append('addons', JSON.stringify(enabledAddons.map(({ name, price }) => ({ name, price }))));
+                                                        }
+                                                        if (editProductImageDetails) {
+                                                            formData.append('image', editProductImageDetails);
+                                                        }
+
+                                                        axios.post(`/api/products/${editingProductDetails.id}`, formData, {
+                                                            headers: {
+                                                                'Content-Type': 'multipart/form-data',
+                                                            },
+                                                        })
+                                                        .then((response) => {
+                                                            setProducts(products.map(p => p.id === editingProductDetails.id ? response.data : p));
+                                                            setEditProductNameDetails('');
+                                                            setEditProductPriceDetails('');
+                                                            setEditProductCategoryDetails('');
+                                                            setEditProductDescriptionDetails('');
+                                                            setEditProductImageDetails(null);
+                                                            setEditImagePreviewDetails(null);
+                                                            setEditSizeOptionsDetails([]);
+                                                            setEditAddonsDetails([]);
+                                                            setEditingProductDetails(null);
+                                                            setShowEditProductDetails(false);
                                                         })
                                                         .catch((error) => {
                                                             console.error('Error updating product:', error);
