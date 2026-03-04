@@ -1459,9 +1459,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditCustomSizeOptions([...editCustomSizeOptions, { size: '', price: '' }]);
                                                                     setEditOptionTypeSelected('custom');
                                                                 }}
-                                                                disabled={editOptionTypeSelected === 'size' || editOptionTypeSelected === 'portion'}
+                                                                disabled={editSizeOptions.length > 0 || editPortionOptions.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelected === 'size' || editOptionTypeSelected === 'portion'
+                                                                    editSizeOptions.length > 0 || editPortionOptions.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1474,9 +1474,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditPortionOptions([...editPortionOptions, { portion: '', price: '' }]);
                                                                     setEditOptionTypeSelected('portion');
                                                                 }}
-                                                                disabled={editOptionTypeSelected === 'size' || editOptionTypeSelected === 'custom'}
+                                                                disabled={editSizeOptions.length > 0 || editCustomSizeOptions.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelected === 'size' || editOptionTypeSelected === 'custom'
+                                                                    editSizeOptions.length > 0 || editCustomSizeOptions.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1489,9 +1489,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditSizeOptions([...editSizeOptions, { size: '', price: '' }]);
                                                                     setEditOptionTypeSelected('size');
                                                                 }}
-                                                                disabled={editOptionTypeSelected === 'portion' || editOptionTypeSelected === 'custom'}
+                                                                disabled={editPortionOptions.length > 0 || editCustomSizeOptions.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelected === 'portion' || editOptionTypeSelected === 'custom'
+                                                                    editPortionOptions.length > 0 || editCustomSizeOptions.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1936,9 +1936,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditCustomSizeOptionsDetails([...editCustomSizeOptionsDetails, { size: '', price: '', enabled: true }]);
                                                                     setEditOptionTypeSelectedDetails('custom');
                                                                 }}
-                                                                disabled={editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'portion'}
+                                                                disabled={editSizeOptionsDetails.length > 0 || editPortionOptionsDetails.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'portion'
+                                                                    editSizeOptionsDetails.length > 0 || editPortionOptionsDetails.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1951,9 +1951,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditPortionOptionsDetails([...editPortionOptionsDetails, { portion: '', price: '', enabled: true }]);
                                                                     setEditOptionTypeSelectedDetails('portion');
                                                                 }}
-                                                                disabled={editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'custom'}
+                                                                disabled={editSizeOptionsDetails.length > 0 || editCustomSizeOptionsDetails.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'custom'
+                                                                    editSizeOptionsDetails.length > 0 || editCustomSizeOptionsDetails.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1966,9 +1966,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }]);
                                                                     setEditOptionTypeSelectedDetails('size');
                                                                 }}
-                                                                disabled={editOptionTypeSelectedDetails === 'portion' || editOptionTypeSelectedDetails === 'custom'}
+                                                                disabled={editPortionOptionsDetails.length > 0 || editCustomSizeOptionsDetails.length > 0}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelectedDetails === 'portion' || editOptionTypeSelectedDetails === 'custom'
+                                                                    editPortionOptionsDetails.length > 0 || editCustomSizeOptionsDetails.length > 0
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
