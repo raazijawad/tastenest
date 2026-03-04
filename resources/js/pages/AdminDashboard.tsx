@@ -107,6 +107,7 @@ export default function AdminDashboard({ auth }: any) {
     const [newProductImage, setNewProductImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [portionOptions, setPortionOptions] = useState<{ portion: string; price: string }[]>([]);
     const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [showEditProduct, setShowEditProduct] = useState(false);
@@ -118,8 +119,10 @@ export default function AdminDashboard({ auth }: any) {
     const [editProductImage, setEditProductImage] = useState<File | null>(null);
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [editPortionOptions, setEditPortionOptions] = useState<{ portion: string; price: string }[]>([]);
     const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
     const [editSizeOptionsDetails, setEditSizeOptionsDetails] = useState<{ size: string; price: string; enabled: boolean }[]>([]);
+    const [editPortionOptionsDetails, setEditPortionOptionsDetails] = useState<{ portion: string; price: string; enabled: boolean }[]>([]);
     const [editAddonsDetails, setEditAddonsDetails] = useState<{ name: string; price: string; enabled: boolean }[]>([]);
     const [showEditProductDetails, setShowEditProductDetails] = useState(false);
     const [editingProductDetails, setEditingProductDetails] = useState<any>(null);
@@ -647,13 +650,22 @@ export default function AdminDashboard({ auth }: any) {
                                                                     <label className="block text-sm font-medium text-gray-700">
                                                                         Size Options
                                                                     </label>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '' }])}
-                                                                        className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
-                                                                    >
-                                                                        <Plus size={14} /> Add Size
-                                                                    </button>
+                                                                    <div className="flex items-center gap-3">
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setPortionOptions([...portionOptions, { portion: '', price: '' }])}
+                                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                        >
+                                                                            <Plus size={14} /> Add Portion
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '' }])}
+                                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                        >
+                                                                            <Plus size={14} /> Add Size
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                                 <div className="space-y-2">
                                                                     {sizeOptions.map((option, index) => (
@@ -1270,13 +1282,22 @@ export default function AdminDashboard({ auth }: any) {
                                                         <label className="block text-sm font-medium text-gray-700">
                                                             Size Options
                                                         </label>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setEditSizeOptions([...editSizeOptions, { size: '', price: '' }])}
-                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
-                                                        >
-                                                            <Plus size={14} /> Add Size
-                                                        </button>
+                                                        <div className="flex items-center gap-3">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setEditPortionOptions([...editPortionOptions, { portion: '', price: '' }])}
+                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                            >
+                                                                <Plus size={14} /> Add Portion
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setEditSizeOptions([...editSizeOptions, { size: '', price: '' }])}
+                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                            >
+                                                                <Plus size={14} /> Add Size
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div className="space-y-2">
                                                         {editSizeOptions.map((option, index) => (
@@ -1600,13 +1621,22 @@ export default function AdminDashboard({ auth }: any) {
                                                         <label className="block text-sm font-medium text-gray-700">
                                                             Size Options
                                                         </label>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }])}
-                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
-                                                        >
-                                                            <Plus size={14} /> Add Size
-                                                        </button>
+                                                        <div className="flex items-center gap-3">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setEditPortionOptionsDetails([...editPortionOptionsDetails, { portion: '', price: '', enabled: true }])}
+                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                            >
+                                                                <Plus size={14} /> Add Portion
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }])}
+                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                            >
+                                                                <Plus size={14} /> Add Size
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div className="space-y-2">
                                                         {editSizeOptionsDetails.map((option, index) => (
