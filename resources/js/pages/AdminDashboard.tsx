@@ -1179,9 +1179,6 @@ export default function AdminDashboard({ auth }: any) {
                                     {/* Pagination */}
                                     {products.length > 0 && (
                                         <div className="flex items-center justify-between mt-4">
-                                            <p className="text-sm text-gray-500">
-                                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, products.length)} of {products.length} products
-                                            </p>
                                             <div className="flex gap-1">
                                                 <button
                                                     onClick={() => setCurrentPage(currentPage - 1)}
@@ -1210,6 +1207,9 @@ export default function AdminDashboard({ auth }: any) {
                                                     <ChevronRight size={16} />
                                                 </button>
                                             </div>
+                                            <p className="text-sm text-gray-500">
+                                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, products.length)} of {products.length} products
+                                            </p>
                                         </div>
                                     )}
                                 </motion.div>
