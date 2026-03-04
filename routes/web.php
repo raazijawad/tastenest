@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReservationController;
 
 // Guest Routes (Login & Register)
 Route::middleware('guest')->group(function () {
@@ -16,6 +17,9 @@ Route::middleware('guest')->group(function () {
 Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
+
+Route::get('/reservation', [ReservationController::class, 'show'])->name('reservation.show');
+Route::post('/reservation', [ReservationController::class, 'store'])->name('reservation.store');
 
 Route::get('/menu', function () {
     return Inertia::render('DishMenu');

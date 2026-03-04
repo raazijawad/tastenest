@@ -22,7 +22,12 @@ export default function Navbar() {
         show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50 } }
     };
 
-    const navLinks = ['Home', 'Menu', 'About', 'Contact'];
+    const navLinks = [
+        { name: 'Home', href: '/' },
+        { name: 'Menu', href: '/menu' },
+        { name: 'About', href: '#about' },
+        { name: 'Contact', href: '#contact' },
+    ];
 
     return (
         <motion.header
@@ -41,16 +46,26 @@ export default function Navbar() {
             {/* Desktop Nav Links */}
             <nav className="hidden lg:flex items-center space-x-10">
                 {navLinks.map((link) => (
-                    <motion.div key={link} variants={navItemVariants} className="relative group">
+                    <motion.div key={link.name} variants={navItemVariants} className="relative group">
                         <a
-                            href="#"
+                            href={link.href}
                             className="text-sm tracking-widest font-medium uppercase text-gray-400 hover:text-white transition-colors"
                         >
-                            {link}
+                            {link.name}
                         </a>
                     </motion.div>
                 ))}
             </nav>
+
+            {/* Reservation Button */}
+            <motion.div variants={navItemVariants} className="hidden lg:flex items-center">
+                <Link
+                    href="/reservation"
+                    className="bg-[#E05D36] hover:bg-[#C8502D] text-white text-xs tracking-[0.2em] font-semibold uppercase px-6 py-3 transition-colors rounded-sm"
+                >
+                    Book a Table
+                </Link>
+            </motion.div>
 
             {/* Auth Section */}
             <motion.div variants={navItemVariants} className="flex items-center space-x-4">

@@ -85,10 +85,10 @@ export default function Home() {
 
                         {/* Action Buttons */}
                         <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6">
-                            <button className="group relative border border-white bg-transparent px-10 py-4 text-xs md:text-sm tracking-[0.2em] font-semibold uppercase text-white transition-all duration-300 hover:text-black overflow-hidden rounded-sm">
+                            <Link href="/reservation" className="group relative border border-white bg-transparent px-10 py-4 text-xs md:text-sm tracking-[0.2em] font-semibold uppercase text-white transition-all duration-300 hover:text-black overflow-hidden rounded-sm">
                                 <span className="relative z-10 transition-colors duration-300 group-hover:text-black">Book a Table</span>
                                 <div className="absolute inset-0 bg-white transform scale-y-0 origin-bottom group-hover:scale-y-100 transition-transform duration-300 ease-out" />
-                            </button>
+                            </Link>
 
                             <Link href="/menu" className="group relative border border-white bg-transparent px-10 py-4 text-xs md:text-sm tracking-[0.2em] font-semibold uppercase text-white transition-all duration-300 hover:text-black overflow-hidden rounded-sm">
                                 <span className="relative z-10 transition-colors duration-300 group-hover:text-black">Open Menu</span>
