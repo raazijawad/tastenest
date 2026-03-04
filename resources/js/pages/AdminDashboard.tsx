@@ -108,6 +108,7 @@ export default function AdminDashboard({ auth }: any) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [portionOptions, setPortionOptions] = useState<{ portion: string; price: string }[]>([]);
+    const [optionTypeSelected, setOptionTypeSelected] = useState<'size' | 'portion' | null>(null);
     const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [showEditProduct, setShowEditProduct] = useState(false);
@@ -120,9 +121,11 @@ export default function AdminDashboard({ auth }: any) {
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [editPortionOptions, setEditPortionOptions] = useState<{ portion: string; price: string }[]>([]);
+    const [editOptionTypeSelected, setEditOptionTypeSelected] = useState<'size' | 'portion' | null>(null);
     const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
     const [editSizeOptionsDetails, setEditSizeOptionsDetails] = useState<{ size: string; price: string; enabled: boolean }[]>([]);
     const [editPortionOptionsDetails, setEditPortionOptionsDetails] = useState<{ portion: string; price: string; enabled: boolean }[]>([]);
+    const [editOptionTypeSelectedDetails, setEditOptionTypeSelectedDetails] = useState<'size' | 'portion' | null>(null);
     const [editAddonsDetails, setEditAddonsDetails] = useState<{ name: string; price: string; enabled: boolean }[]>([]);
     const [showEditProductDetails, setShowEditProductDetails] = useState(false);
     const [editingProductDetails, setEditingProductDetails] = useState<any>(null);
@@ -653,15 +656,31 @@ export default function AdminDashboard({ auth }: any) {
                                                                     <div className="flex items-center gap-3">
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => setPortionOptions([...portionOptions, { portion: '', price: '' }])}
-                                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                            onClick={() => {
+                                                                                setPortionOptions([...portionOptions, { portion: '', price: '' }]);
+                                                                                setOptionTypeSelected('portion');
+                                                                            }}
+                                                                            disabled={optionTypeSelected === 'size'}
+                                                                            className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                                optionTypeSelected === 'size'
+                                                                                    ? 'text-gray-400 cursor-not-allowed'
+                                                                                    : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                            }`}
                                                                         >
                                                                             <Plus size={14} /> Add Portion
                                                                         </button>
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => setSizeOptions([...sizeOptions, { size: '', price: '' }])}
-                                                                            className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                            onClick={() => {
+                                                                                setSizeOptions([...sizeOptions, { size: '', price: '' }]);
+                                                                                setOptionTypeSelected('size');
+                                                                            }}
+                                                                            disabled={optionTypeSelected === 'portion'}
+                                                                            className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                                optionTypeSelected === 'portion'
+                                                                                    ? 'text-gray-400 cursor-not-allowed'
+                                                                                    : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                            }`}
                                                                         >
                                                                             <Plus size={14} /> Add Size
                                                                         </button>
@@ -701,6 +720,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                                 onClick={() => {
                                                                                     const newOptions = sizeOptions.filter((_, i) => i !== index);
                                                                                     setSizeOptions(newOptions);
+                                                                                    if (newOptions.length === 0) {
+                                                                                        setOptionTypeSelected(null);
+                                                                                    }
                                                                                 }}
                                                                                 className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                             >
@@ -747,6 +769,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                                 onClick={() => {
                                                                                     const newOptions = portionOptions.filter((_, i) => i !== index);
                                                                                     setPortionOptions(newOptions);
+                                                                                    if (newOptions.length === 0) {
+                                                                                        setOptionTypeSelected(null);
+                                                                                    }
                                                                                 }}
                                                                                 className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                             >
@@ -944,6 +969,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setImagePreview(null);
                                                                         setSizeOptions([]);
                                                                         setPortionOptions([]);
+                                                                        setOptionTypeSelected(null);
                                                                         setAddons([]);
                                                                         setShowAddProduct(false);
                                                                     })
@@ -1351,15 +1377,31 @@ export default function AdminDashboard({ auth }: any) {
                                                         <div className="flex items-center gap-3">
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setEditPortionOptions([...editPortionOptions, { portion: '', price: '' }])}
-                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                onClick={() => {
+                                                                    setEditPortionOptions([...editPortionOptions, { portion: '', price: '' }]);
+                                                                    setEditOptionTypeSelected('portion');
+                                                                }}
+                                                                disabled={editOptionTypeSelected === 'size'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelected === 'size'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
                                                             >
                                                                 <Plus size={14} /> Add Portion
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setEditSizeOptions([...editSizeOptions, { size: '', price: '' }])}
-                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                onClick={() => {
+                                                                    setEditSizeOptions([...editSizeOptions, { size: '', price: '' }]);
+                                                                    setEditOptionTypeSelected('size');
+                                                                }}
+                                                                disabled={editOptionTypeSelected === 'portion'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelected === 'portion'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
                                                             >
                                                                 <Plus size={14} /> Add Size
                                                             </button>
@@ -1399,6 +1441,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     onClick={() => {
                                                                         const newOptions = editSizeOptions.filter((_, i) => i !== index);
                                                                         setEditSizeOptions(newOptions);
+                                                                        if (newOptions.length === 0) {
+                                                                            setEditOptionTypeSelected(null);
+                                                                        }
                                                                     }}
                                                                     className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                 >
@@ -1445,6 +1490,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     onClick={() => {
                                                                         const newOptions = editPortionOptions.filter((_, i) => i !== index);
                                                                         setEditPortionOptions(newOptions);
+                                                                        if (newOptions.length === 0) {
+                                                                            setEditOptionTypeSelected(null);
+                                                                        }
                                                                     }}
                                                                     className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
                                                                 >
@@ -1642,6 +1690,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditImagePreview(null);
                                                             setEditSizeOptions([]);
                                                             setEditPortionOptions([]);
+                                                            setEditOptionTypeSelected(null);
                                                             setEditAddons([]);
                                                             setEditingProduct(null);
                                                             setShowEditProduct(false);
@@ -1744,15 +1793,31 @@ export default function AdminDashboard({ auth }: any) {
                                                         <div className="flex items-center gap-3">
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setEditPortionOptionsDetails([...editPortionOptionsDetails, { portion: '', price: '', enabled: true }])}
-                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                onClick={() => {
+                                                                    setEditPortionOptionsDetails([...editPortionOptionsDetails, { portion: '', price: '', enabled: true }]);
+                                                                    setEditOptionTypeSelectedDetails('portion');
+                                                                }}
+                                                                disabled={editOptionTypeSelectedDetails === 'size'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelectedDetails === 'size'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
                                                             >
                                                                 <Plus size={14} /> Add Portion
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                onClick={() => setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }])}
-                                                                className="text-xs text-[#E05D36] hover:text-[#C8502D] font-medium flex items-center gap-1"
+                                                                onClick={() => {
+                                                                    setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }]);
+                                                                    setEditOptionTypeSelectedDetails('size');
+                                                                }}
+                                                                disabled={editOptionTypeSelectedDetails === 'portion'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelectedDetails === 'portion'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
                                                             >
                                                                 <Plus size={14} /> Add Size
                                                             </button>
@@ -2045,6 +2110,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditImagePreviewDetails(null);
                                                             setEditSizeOptionsDetails([]);
                                                             setEditPortionOptionsDetails([]);
+                                                            setEditOptionTypeSelectedDetails(null);
                                                             setEditAddonsDetails([]);
                                                             setEditingProductDetails(null);
                                                             setShowEditProductDetails(false);
