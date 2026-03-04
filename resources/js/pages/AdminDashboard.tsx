@@ -572,37 +572,44 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-sm text-gray-400 mt-1">Click "Add Category" to create your first category</p>
                                             </div>
                                         ) : (
-                                            categories.map((category, index) => (
-                                                <div
-                                                    key={category.id}
-                                                    draggable
-                                                    onDragStart={() => handleDragStart(index)}
-                                                    onDragOver={(e) => {
-                                                        e.preventDefault();
-                                                        handleDragOver(index);
-                                                    }}
-                                                    onDragEnd={handleDragEnd}
-                                                    onDragLeave={() => setDragOverCategoryIndex(null)}
-                                                    className={`flex items-center gap-4 p-4 transition-all cursor-grab active:cursor-grabbing ${
-                                                        draggedCategoryIndex === index
-                                                            ? 'bg-gray-100 opacity-50 scale-[0.98]'
-                                                            : dragOverCategoryIndex === index
-                                                            ? 'bg-gray-50/80 border-2 border-dashed border-[#E05D36]/30'
-                                                            : 'hover:bg-gray-50/60'
-                                                    }`}
-                                                >
-                                                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
-                                                        <Tags size={16} className="text-[#E05D36]" />
+                                            categories.map((category, index) => {
+                                                // Count products in this category
+                                                const productCount = products.filter(
+                                                    p => p.category === category.name && p.status === 'Available'
+                                                ).length;
+                                                
+                                                return (
+                                                    <div
+                                                        key={category.id}
+                                                        draggable
+                                                        onDragStart={() => handleDragStart(index)}
+                                                        onDragOver={(e) => {
+                                                            e.preventDefault();
+                                                            handleDragOver(index);
+                                                        }}
+                                                        onDragEnd={handleDragEnd}
+                                                        onDragLeave={() => setDragOverCategoryIndex(null)}
+                                                        className={`flex items-center gap-4 p-4 transition-all cursor-grab active:cursor-grabbing ${
+                                                            draggedCategoryIndex === index
+                                                                ? 'bg-gray-100 opacity-50 scale-[0.98]'
+                                                                : dragOverCategoryIndex === index
+                                                                ? 'bg-gray-50/80 border-2 border-dashed border-[#E05D36]/30'
+                                                                : 'hover:bg-gray-50/60'
+                                                        }`}
+                                                    >
+                                                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
+                                                            <Tags size={16} className="text-[#E05D36]" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-sm font-medium text-gray-800">{category.name}</p>
+                                                            <p className="text-xs text-gray-400">{productCount} {productCount === 1 ? 'product' : 'products'}</p>
+                                                        </div>
+                                                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${category.status === 'Active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                            {category.status}
+                                                        </span>
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <p className="text-sm font-medium text-gray-800">{category.name}</p>
-                                                        <p className="text-xs text-gray-400">{category.description || 'No description'}</p>
-                                                    </div>
-                                                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${category.status === 'Active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                        {category.status}
-                                                    </span>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </motion.div>
