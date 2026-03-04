@@ -16,6 +16,16 @@ interface Product {
     addons?: string | any[];
 }
 
+interface CategoryProduct {
+    id: number;
+    name: string;
+    category: string;
+    price: string;
+    description: string;
+    image: string | null;
+    status: string;
+}
+
 interface SizeOption {
     size: string;
     price: string;
@@ -36,6 +46,7 @@ export default function ProductShow({ id }: Props) {
     const [selectedSize, setSelectedSize] = useState<string>('');
     const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
     const [calculatedPrice, setCalculatedPrice] = useState<number>(0);
+    const [categoryProducts, setCategoryProducts] = useState<CategoryProduct[]>([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -50,6 +61,36 @@ export default function ProductShow({ id }: Props) {
         };
 
         fetchProduct();
+    }, [id]);
+
+    // Fetch 8 products from different categories for footer
+    useEffect(() => {
+        const fetchCategoryProducts = async () => {
+            try {
+                const response = await axios.get('/api/products');
+                const availableProducts = response.data
+                    .filter((p: Product) => p.status === 'Available' && p.id !== parseInt(id))
+                    .filter((p: Product, index: number, self: Product[]) =>
+                        index === self.findIndex((p2) => p2.id === p.id)
+                    );
+
+                // Group by category and pick one from each
+                const grouped = availableProducts.reduce((acc: any, p: Product) => {
+                    if (!acc[p.category]) {
+                        acc[p.category] = p;
+                    }
+                    return acc;
+                }, {});
+
+                // Get up to 6 category products
+                const products = Object.values(grouped).slice(0, 6) as CategoryProduct[];
+                setCategoryProducts(products);
+            } catch (error) {
+                console.error('Error fetching category products:', error);
+            }
+        };
+
+        fetchCategoryProducts();
     }, [id]);
 
     // Parse size_options and addons from JSON string if needed
@@ -293,6 +334,77 @@ export default function ProductShow({ id }: Props) {
                         </motion.div>
                     </div>
                 </div>
+
+                {/* Explore More Categories Section */}
+                {categoryProducts.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true, margin: "-80px" }}
+                        transition={{ duration: 0.7 }}
+                        className="py-6 px-6 lg:px-10 border-t border-white/5"
+                    >
+                        <div className="max-w-6xl mx-auto">
+
+
+                            {/* Products Grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                {categoryProducts.slice(0, 6).map((catProduct, idx) => (
+                                    <motion.div
+                                        key={catProduct.id}
+                                        initial={{ opacity: 0, y: 40 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-40px" }}
+                                        transition={{ duration: 0.6, delay: idx * 0.1 }}
+                                        className="group relative flex flex-col bg-[#1a1a1a] border border-white/5 overflow-hidden transition-all duration-500 hover:border-white/20"
+                                    >
+                                        {/* Image */}
+                                        <div className="w-full h-[160px] overflow-hidden relative">
+                                            <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none" />
+                                            {catProduct.image ? (
+                                                <img
+                                                    src={`/storage/${catProduct.image}`}
+                                                    alt={catProduct.name}
+                                                    className="w-full h-full object-cover transform scale-105 group-hover:scale-100 grayscale-[40%] group-hover:grayscale-0 transition-all duration-1000 ease-out"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                                                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#1a1a1a] to-transparent z-20" />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="p-4 flex flex-col flex-grow relative z-30 -mt-2">
+                                            <span className="font-sans text-[8px] text-[#E05D36] tracking-[0.2em] uppercase font-semibold mb-1">
+                                                {catProduct.category}
+                                            </span>
+                                            <h3 className="font-serif text-[13px] text-[#E05D36] mb-1 font-semibold tracking-wide group-hover:text-white transition-colors duration-500 line-clamp-1">
+                                                {catProduct.name}
+                                            </h3>
+
+                                            <p className="font-sans text-[10px] text-gray-500 mb-3 line-clamp-2">
+                                                {catProduct.description || 'No description'}
+                                            </p>
+
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <span className="font-sans text-[13px] text-white font-semibold">${parseFloat(catProduct.price).toFixed(2)}</span>
+                                            </div>
+
+                                            <Link href={`/product/${catProduct.id}`} className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-4 py-2 w-fit text-[9px] tracking-[0.2em] font-semibold uppercase transition-colors">
+                                                <span className="relative z-10">View</span>
+                                                <div className="absolute inset-0 bg-[#C8502D] scale-x-0 origin-left group-hover/btn:scale-x-100 transition-transform duration-300" />
+                                            </Link>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Footer Section */}
                 <footer className="relative w-full bg-[#111315] pt-20 pb-10 px-6 lg:px-12 border-t border-white/5 font-sans selection:bg-[#E05D36]/30">
