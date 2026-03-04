@@ -108,7 +108,8 @@ export default function AdminDashboard({ auth }: any) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [sizeOptions, setSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [portionOptions, setPortionOptions] = useState<{ portion: string; price: string }[]>([]);
-    const [optionTypeSelected, setOptionTypeSelected] = useState<'size' | 'portion' | null>(null);
+    const [customSizeOptions, setCustomSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [optionTypeSelected, setOptionTypeSelected] = useState<'size' | 'portion' | 'custom' | null>(null);
     const [addons, setAddons] = useState<{ name: string; price: string }[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [showEditProduct, setShowEditProduct] = useState(false);
@@ -121,11 +122,13 @@ export default function AdminDashboard({ auth }: any) {
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [editSizeOptions, setEditSizeOptions] = useState<{ size: string; price: string }[]>([]);
     const [editPortionOptions, setEditPortionOptions] = useState<{ portion: string; price: string }[]>([]);
-    const [editOptionTypeSelected, setEditOptionTypeSelected] = useState<'size' | 'portion' | null>(null);
+    const [editCustomSizeOptions, setEditCustomSizeOptions] = useState<{ size: string; price: string }[]>([]);
+    const [editOptionTypeSelected, setEditOptionTypeSelected] = useState<'size' | 'portion' | 'custom' | null>(null);
     const [editAddons, setEditAddons] = useState<{ name: string; price: string }[]>([]);
     const [editSizeOptionsDetails, setEditSizeOptionsDetails] = useState<{ size: string; price: string; enabled: boolean }[]>([]);
     const [editPortionOptionsDetails, setEditPortionOptionsDetails] = useState<{ portion: string; price: string; enabled: boolean }[]>([]);
-    const [editOptionTypeSelectedDetails, setEditOptionTypeSelectedDetails] = useState<'size' | 'portion' | null>(null);
+    const [editCustomSizeOptionsDetails, setEditCustomSizeOptionsDetails] = useState<{ size: string; price: string; enabled: boolean }[]>([]);
+    const [editOptionTypeSelectedDetails, setEditOptionTypeSelectedDetails] = useState<'size' | 'portion' | 'custom' | null>(null);
     const [editAddonsDetails, setEditAddonsDetails] = useState<{ name: string; price: string; enabled: boolean }[]>([]);
     const [showEditProductDetails, setShowEditProductDetails] = useState(false);
     const [editingProductDetails, setEditingProductDetails] = useState<any>(null);
@@ -657,12 +660,27 @@ export default function AdminDashboard({ auth }: any) {
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => {
+                                                                                setCustomSizeOptions([...customSizeOptions, { size: '', price: '' }]);
+                                                                                setOptionTypeSelected('custom');
+                                                                            }}
+                                                                            disabled={optionTypeSelected === 'size' || optionTypeSelected === 'portion'}
+                                                                            className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                                optionTypeSelected === 'size' || optionTypeSelected === 'portion'
+                                                                                    ? 'text-gray-400 cursor-not-allowed'
+                                                                                    : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                            }`}
+                                                                        >
+                                                                            <Plus size={14} /> Custom Size
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
                                                                                 setPortionOptions([...portionOptions, { portion: '', price: '' }]);
                                                                                 setOptionTypeSelected('portion');
                                                                             }}
-                                                                            disabled={optionTypeSelected === 'size'}
+                                                                            disabled={optionTypeSelected === 'size' || optionTypeSelected === 'custom'}
                                                                             className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                                optionTypeSelected === 'size'
+                                                                                optionTypeSelected === 'size' || optionTypeSelected === 'custom'
                                                                                     ? 'text-gray-400 cursor-not-allowed'
                                                                                     : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                             }`}
@@ -675,9 +693,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                                 setSizeOptions([...sizeOptions, { size: '', price: '' }]);
                                                                                 setOptionTypeSelected('size');
                                                                             }}
-                                                                            disabled={optionTypeSelected === 'portion'}
+                                                                            disabled={optionTypeSelected === 'portion' || optionTypeSelected === 'custom'}
                                                                             className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                                optionTypeSelected === 'portion'
+                                                                                optionTypeSelected === 'portion' || optionTypeSelected === 'custom'
                                                                                     ? 'text-gray-400 cursor-not-allowed'
                                                                                     : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                             }`}
@@ -733,6 +751,53 @@ export default function AdminDashboard({ auth }: any) {
                                                                 </div>
                                                                 {sizeOptions.length === 0 && (
                                                                     <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                                )}
+
+                                                                {/* Custom Size Options */}
+                                                                <div className="space-y-2">
+                                                                    {customSizeOptions.map((option, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={option.size}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...customSizeOptions];
+                                                                                    newOptions[index].size = e.target.value;
+                                                                                    setCustomSizeOptions(newOptions);
+                                                                                }}
+                                                                                placeholder="Enter custom size"
+                                                                                className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                            />
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={option.price}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...customSizeOptions];
+                                                                                    newOptions[index].price = e.target.value;
+                                                                                    setCustomSizeOptions(newOptions);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newOptions = customSizeOptions.filter((_, i) => i !== index);
+                                                                                    setCustomSizeOptions(newOptions);
+                                                                                    if (newOptions.length === 0) {
+                                                                                        setOptionTypeSelected(null);
+                                                                                    }
+                                                                                }}
+                                                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={14} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {customSizeOptions.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No custom size options added</p>
                                                                 )}
 
                                                                 {/* Portion Options */}
@@ -936,8 +1001,8 @@ export default function AdminDashboard({ auth }: any) {
                                                                     formData.append('price', newProductPrice);
                                                                     formData.append('description', newProductDescription);
                                                                     formData.append('status', 'Available');
-                                                                    // Combine size and portion options
-                                                                    const allSizeOptions = [...sizeOptions];
+                                                                    // Combine size, custom size, and portion options
+                                                                    const allSizeOptions = [...sizeOptions, ...customSizeOptions];
                                                                     if (portionOptions.length > 0) {
                                                                         portionOptions.forEach((opt) => {
                                                                             allSizeOptions.push({ size: opt.portion, price: opt.price });
@@ -967,6 +1032,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setImagePreview(null);
                                                                         setSizeOptions([]);
                                                                         setPortionOptions([]);
+                                                                        setCustomSizeOptions([]);
                                                                         setOptionTypeSelected(null);
                                                                         setAddons([]);
                                                                         setShowAddProduct(false);
@@ -1070,8 +1136,13 @@ export default function AdminDashboard({ auth }: any) {
                                                                 // Separate size options from portion options
                                                                 const sizeOpts = Array.isArray(product.size_options) ? product.size_options : [];
                                                                 const portionOpts = sizeOpts.filter((opt: any) => ['Normal Portion', 'Full Portion'].includes(opt.size));
-                                                                const regularSizeOpts = sizeOpts.filter((opt: any) => !['Normal Portion', 'Full Portion'].includes(opt.size));
-                                                                setEditSizeOptions(regularSizeOpts.map((opt: any) => ({ size: opt.size, price: opt.price })));
+                                                                // Predefined sizes: Small, Medium, Large (use dropdown)
+                                                                const predefinedSizes = ['Small', 'Medium', 'Large'];
+                                                                const predefinedSizeOpts = sizeOpts.filter((opt: any) => predefinedSizes.includes(opt.size));
+                                                                // Custom sizes: anything else (use text input)
+                                                                const customSizeOpts = sizeOpts.filter((opt: any) => !predefinedSizes.includes(opt.size) && !['Normal Portion', 'Full Portion'].includes(opt.size));
+                                                                setEditSizeOptions(predefinedSizeOpts.map((opt: any) => ({ size: opt.size, price: opt.price })));
+                                                                setEditCustomSizeOptions(customSizeOpts.map((opt: any) => ({ size: opt.size, price: opt.price })));
                                                                 setEditPortionOptions(portionOpts.map((opt: any) => ({ portion: opt.size, price: opt.price })));
                                                                 setEditAddons(Array.isArray(product.addons) ? product.addons : []);
                                                                 setShowEditProduct(true);
@@ -1244,9 +1315,18 @@ export default function AdminDashboard({ auth }: any) {
                                                                 const addonOpts = Array.isArray(product.addons) ? product.addons : [];
                                                                 // Separate size options from portion options
                                                                 const portionOpts = sizeOpts.filter((opt: any) => ['Normal Portion', 'Full Portion'].includes(opt.size));
-                                                                const regularSizeOpts = sizeOpts.filter((opt: any) => !['Normal Portion', 'Full Portion'].includes(opt.size));
+                                                                // Predefined sizes: Small, Medium, Large (use dropdown)
+                                                                const predefinedSizes = ['Small', 'Medium', 'Large'];
+                                                                const predefinedSizeOpts = sizeOpts.filter((opt: any) => predefinedSizes.includes(opt.size));
+                                                                // Custom sizes: anything else (use text input)
+                                                                const customSizeOpts = sizeOpts.filter((opt: any) => !predefinedSizes.includes(opt.size) && !['Normal Portion', 'Full Portion'].includes(opt.size));
                                                                 // Restore enabled state from saved data, default to true if not present
-                                                                setEditSizeOptionsDetails(regularSizeOpts.map((opt: any) => ({
+                                                                setEditSizeOptionsDetails(predefinedSizeOpts.map((opt: any) => ({
+                                                                    size: opt.size,
+                                                                    price: opt.price,
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true
+                                                                })));
+                                                                setEditCustomSizeOptionsDetails(customSizeOpts.map((opt: any) => ({
                                                                     size: opt.size,
                                                                     price: opt.price,
                                                                     enabled: opt.enabled !== undefined ? opt.enabled : true
@@ -1257,9 +1337,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     enabled: opt.enabled !== undefined ? opt.enabled : true
                                                                 })));
                                                                 setEditAddonsDetails(addonOpts.map((opt: any) => ({
-                                                                    name: opt.name, 
-                                                                    price: opt.price, 
-                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true 
+                                                                    name: opt.name,
+                                                                    price: opt.price,
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true
                                                                 })));
                                                                 setShowEditProductDetails(true);
                                                             }}
@@ -1376,12 +1456,27 @@ export default function AdminDashboard({ auth }: any) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => {
+                                                                    setEditCustomSizeOptions([...editCustomSizeOptions, { size: '', price: '' }]);
+                                                                    setEditOptionTypeSelected('custom');
+                                                                }}
+                                                                disabled={editOptionTypeSelected === 'size' || editOptionTypeSelected === 'portion'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelected === 'size' || editOptionTypeSelected === 'portion'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
+                                                            >
+                                                                <Plus size={14} /> Custom Size
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
                                                                     setEditPortionOptions([...editPortionOptions, { portion: '', price: '' }]);
                                                                     setEditOptionTypeSelected('portion');
                                                                 }}
-                                                                disabled={editOptionTypeSelected === 'size'}
+                                                                disabled={editOptionTypeSelected === 'size' || editOptionTypeSelected === 'custom'}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelected === 'size'
+                                                                    editOptionTypeSelected === 'size' || editOptionTypeSelected === 'custom'
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1394,9 +1489,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditSizeOptions([...editSizeOptions, { size: '', price: '' }]);
                                                                     setEditOptionTypeSelected('size');
                                                                 }}
-                                                                disabled={editOptionTypeSelected === 'portion'}
+                                                                disabled={editOptionTypeSelected === 'portion' || editOptionTypeSelected === 'custom'}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelected === 'portion'
+                                                                    editOptionTypeSelected === 'portion' || editOptionTypeSelected === 'custom'
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1452,6 +1547,53 @@ export default function AdminDashboard({ auth }: any) {
                                                     </div>
                                                     {editSizeOptions.length === 0 && (
                                                         <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                    )}
+
+                                                    {/* Custom Size Options */}
+                                                    <div className="space-y-2">
+                                                        {editCustomSizeOptions.map((option, index) => (
+                                                            <div key={index} className="flex gap-2">
+                                                                <input
+                                                                    type="text"
+                                                                    value={option.size}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editCustomSizeOptions];
+                                                                        newOptions[index].size = e.target.value;
+                                                                        setEditCustomSizeOptions(newOptions);
+                                                                    }}
+                                                                    placeholder="Enter custom size"
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.price}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editCustomSizeOptions];
+                                                                        newOptions[index].price = e.target.value;
+                                                                        setEditCustomSizeOptions(newOptions);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        const newOptions = editCustomSizeOptions.filter((_, i) => i !== index);
+                                                                        setEditCustomSizeOptions(newOptions);
+                                                                        if (newOptions.length === 0) {
+                                                                            setEditOptionTypeSelected(null);
+                                                                        }
+                                                                    }}
+                                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                >
+                                                                    <Plus size={14} className="rotate-45" />
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editCustomSizeOptions.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No custom size options added</p>
                                                     )}
 
                                                     {/* Portion Options */}
@@ -1656,8 +1798,8 @@ export default function AdminDashboard({ auth }: any) {
                                                         formData.append('price', editProductPrice);
                                                         formData.append('description', editProductDescription);
                                                         formData.append('status', editingProduct.status);
-                                                        // Combine size and portion options
-                                                        const allSizeOptions = [...editSizeOptions];
+                                                        // Combine size, custom size, and portion options
+                                                        const allSizeOptions = [...editSizeOptions, ...editCustomSizeOptions];
                                                         if (editPortionOptions.length > 0) {
                                                             editPortionOptions.forEach((opt) => {
                                                                 allSizeOptions.push({ size: opt.portion, price: opt.price });
@@ -1686,6 +1828,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditImagePreview(null);
                                                             setEditSizeOptions([]);
                                                             setEditPortionOptions([]);
+                                                            setEditCustomSizeOptions([]);
                                                             setEditOptionTypeSelected(null);
                                                             setEditAddons([]);
                                                             setEditingProduct(null);
@@ -1790,12 +1933,27 @@ export default function AdminDashboard({ auth }: any) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => {
+                                                                    setEditCustomSizeOptionsDetails([...editCustomSizeOptionsDetails, { size: '', price: '', enabled: true }]);
+                                                                    setEditOptionTypeSelectedDetails('custom');
+                                                                }}
+                                                                disabled={editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'portion'}
+                                                                className={`text-xs font-medium flex items-center gap-1 transition-all ${
+                                                                    editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'portion'
+                                                                        ? 'text-gray-400 cursor-not-allowed'
+                                                                        : 'text-[#E05D36] hover:text-[#C8502D]'
+                                                                }`}
+                                                            >
+                                                                <Plus size={14} /> Custom Size
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
                                                                     setEditPortionOptionsDetails([...editPortionOptionsDetails, { portion: '', price: '', enabled: true }]);
                                                                     setEditOptionTypeSelectedDetails('portion');
                                                                 }}
-                                                                disabled={editOptionTypeSelectedDetails === 'size'}
+                                                                disabled={editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'custom'}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelectedDetails === 'size'
+                                                                    editOptionTypeSelectedDetails === 'size' || editOptionTypeSelectedDetails === 'custom'
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1808,9 +1966,9 @@ export default function AdminDashboard({ auth }: any) {
                                                                     setEditSizeOptionsDetails([...editSizeOptionsDetails, { size: '', price: '', enabled: true }]);
                                                                     setEditOptionTypeSelectedDetails('size');
                                                                 }}
-                                                                disabled={editOptionTypeSelectedDetails === 'portion'}
+                                                                disabled={editOptionTypeSelectedDetails === 'portion' || editOptionTypeSelectedDetails === 'custom'}
                                                                 className={`text-xs font-medium flex items-center gap-1 transition-all ${
-                                                                    editOptionTypeSelectedDetails === 'portion'
+                                                                    editOptionTypeSelectedDetails === 'portion' || editOptionTypeSelectedDetails === 'custom'
                                                                         ? 'text-gray-400 cursor-not-allowed'
                                                                         : 'text-[#E05D36] hover:text-[#C8502D]'
                                                                 }`}
@@ -1866,6 +2024,53 @@ export default function AdminDashboard({ auth }: any) {
                                                     </div>
                                                     {editSizeOptionsDetails.length === 0 && (
                                                         <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                    )}
+
+                                                    {/* Custom Size Options */}
+                                                    <div className="space-y-2">
+                                                        {editCustomSizeOptionsDetails.map((option, index) => (
+                                                            <div key={index} className="flex gap-2 items-center">
+                                                                <input
+                                                                    type="text"
+                                                                    value={option.size}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editCustomSizeOptionsDetails];
+                                                                        newOptions[index].size = e.target.value;
+                                                                        setEditCustomSizeOptionsDetails(newOptions);
+                                                                    }}
+                                                                    placeholder="Enter custom size"
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.price}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editCustomSizeOptionsDetails];
+                                                                        newOptions[index].price = e.target.value;
+                                                                        setEditCustomSizeOptionsDetails(newOptions);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={option.enabled}
+                                                                        onChange={() => {
+                                                                            const newOptions = [...editCustomSizeOptionsDetails];
+                                                                            newOptions[index].enabled = !newOptions[index].enabled;
+                                                                            setEditCustomSizeOptionsDetails(newOptions);
+                                                                        }}
+                                                                        className="sr-only peer"
+                                                                    />
+                                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#E05D36]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E05D36]"></div>
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editCustomSizeOptionsDetails.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No custom size options added</p>
                                                     )}
 
                                                     {/* Portion Options */}
@@ -2073,8 +2278,8 @@ export default function AdminDashboard({ auth }: any) {
                                                         formData.append('price', editProductPriceDetails);
                                                         formData.append('description', editProductDescriptionDetails);
                                                         formData.append('status', editingProductDetails.status);
-                                                        // Combine size and portion options with enabled state
-                                                        const allSizeOptions = [...editSizeOptionsDetails];
+                                                        // Combine size, custom size, and portion options with enabled state
+                                                        const allSizeOptions = [...editSizeOptionsDetails, ...editCustomSizeOptionsDetails];
                                                         if (editPortionOptionsDetails.length > 0) {
                                                             editPortionOptionsDetails.forEach((opt) => {
                                                                 allSizeOptions.push({ size: opt.portion, price: opt.price, enabled: opt.enabled });
@@ -2103,6 +2308,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditImagePreviewDetails(null);
                                                             setEditSizeOptionsDetails([]);
                                                             setEditPortionOptionsDetails([]);
+                                                            setEditCustomSizeOptionsDetails([]);
                                                             setEditOptionTypeSelectedDetails(null);
                                                             setEditAddonsDetails([]);
                                                             setEditingProductDetails(null);
