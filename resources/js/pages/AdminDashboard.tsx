@@ -99,6 +99,8 @@ export default function AdminDashboard({ auth }: any) {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [newCategoryDescription, setNewCategoryDescription] = useState('');
     const [categories, setCategories] = useState<any[]>([]);
+    const [draggedCategoryIndex, setDraggedCategoryIndex] = useState<number | null>(null);
+    const [dragOverCategoryIndex, setDragOverCategoryIndex] = useState<number | null>(null);
     const [showAddProduct, setShowAddProduct] = useState(false);
     const [newProductName, setNewProductName] = useState('');
     const [newProductPrice, setNewProductPrice] = useState('');
@@ -162,6 +164,42 @@ export default function AdminDashboard({ auth }: any) {
                 console.error('Error fetching products:', error);
             });
     }, []);
+
+    // Handle drag and drop reorder
+    const handleDragStart = (index: number) => {
+        setDraggedCategoryIndex(index);
+    };
+
+    const handleDragOver = (index: number) => {
+        if (draggedCategoryIndex === null || draggedCategoryIndex === index) return;
+        setDragOverCategoryIndex(index);
+        
+        // Reorder the array
+        const newCategories = [...categories];
+        const draggedItem = newCategories[draggedCategoryIndex];
+        newCategories.splice(draggedCategoryIndex, 1);
+        newCategories.splice(index, 0, draggedItem);
+        setCategories(newCategories);
+        setDraggedCategoryIndex(index);
+    };
+
+    const handleDragEnd = () => {
+        if (draggedCategoryIndex === null) return;
+        
+        // Save the new order to the database
+        const updatedCategories = categories.map((cat, index) => ({
+            id: cat.id,
+            order: index + 1,
+        }));
+        
+        axios.post('/api/categories/reorder', { categories: updatedCategories })
+            .catch((error) => {
+                console.error('Error reordering categories:', error);
+            });
+        
+        setDraggedCategoryIndex(null);
+        setDragOverCategoryIndex(null);
+    };
 
     const navMain = [
         { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
@@ -534,8 +572,25 @@ export default function AdminDashboard({ auth }: any) {
                                                 <p className="text-sm text-gray-400 mt-1">Click "Add Category" to create your first category</p>
                                             </div>
                                         ) : (
-                                            categories.map((category) => (
-                                                <div key={category.id} className="flex items-center gap-4 p-4 hover:bg-gray-50/60 transition-colors">
+                                            categories.map((category, index) => (
+                                                <div
+                                                    key={category.id}
+                                                    draggable
+                                                    onDragStart={() => handleDragStart(index)}
+                                                    onDragOver={(e) => {
+                                                        e.preventDefault();
+                                                        handleDragOver(index);
+                                                    }}
+                                                    onDragEnd={handleDragEnd}
+                                                    onDragLeave={() => setDragOverCategoryIndex(null)}
+                                                    className={`flex items-center gap-4 p-4 transition-all cursor-grab active:cursor-grabbing ${
+                                                        draggedCategoryIndex === index
+                                                            ? 'bg-gray-100 opacity-50 scale-[0.98]'
+                                                            : dragOverCategoryIndex === index
+                                                            ? 'bg-gray-50/80 border-2 border-dashed border-[#E05D36]/30'
+                                                            : 'hover:bg-gray-50/60'
+                                                    }`}
+                                                >
                                                     <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#E05D36]/20 to-orange-100 flex items-center justify-center shrink-0">
                                                         <Tags size={16} className="text-[#E05D36]" />
                                                     </div>

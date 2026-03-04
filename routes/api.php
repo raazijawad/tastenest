@@ -11,6 +11,7 @@ Route::get('/user', function (Request $request) {
 
 // Categories API
 Route::apiResource('categories', CategoryController::class);
+Route::post('/categories/reorder', [CategoryController::class, 'reorder']);
 
 // Products API
 Route::apiResource('products', ProductController::class);

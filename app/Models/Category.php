@@ -11,5 +11,6 @@ class Category extends Model
         'description',
         'status',
         'products_count',
+        'order',
     ];
 }

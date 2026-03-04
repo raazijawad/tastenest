@@ -13,7 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at', 'desc')->get();
+        $categories = Category::orderBy('order', 'asc')->get();
         return response()->json($categories);
     }
 
@@ -28,11 +28,15 @@ class CategoryController extends Controller
             'status' => 'nullable|string',
         ]);
 
+        // Get the highest order and add 1 for the new category
+        $maxOrder = Category::max('order') ?? 0;
+        
         $category = Category::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'status' => $validated['status'] ?? 'Active',
             'products_count' => 0,
+            'order' => $maxOrder + 1,
         ]);
 
         return response()->json($category, 201);
@@ -72,7 +76,25 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         $category->delete();
-        
+
         return response()->json(['message' => 'Category deleted successfully']);
+    }
+
+    /**
+     * Reorder categories.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'categories' => 'required|array',
+            'categories.*.id' => 'required|integer|exists:categories,id',
+            'categories.*.order' => 'required|integer',
+        ]);
+
+        foreach ($validated['categories'] as $categoryData) {
+            Category::where('id', $categoryData['id'])->update(['order' => $categoryData['order']]);
+        }
+
+        return response()->json(['message' => 'Categories reordered successfully']);
     }
 }

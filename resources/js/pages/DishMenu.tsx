@@ -111,11 +111,19 @@ export default function DishMenu() {
         return acc;
     }, {} as Record<string, Product[]>);
 
-    // Get unique categories from products, ordered by admin categories
+    // Get unique categories from products, ordered by admin categories order field
     const productCategories = Object.keys(groupedProducts);
     const sortedCategories = categories
+        .sort((a, b) => (a.order || 0) - (b.order || 0)) // Sort by order field
         .filter(c => productCategories.includes(c.name))
         .map(c => c.name);
+    
+    // Add any categories that exist in products but not in admin categories (fallback)
+    productCategories.forEach(cat => {
+        if (!sortedCategories.includes(cat)) {
+            sortedCategories.push(cat);
+        }
+    });
 
     return (
         <Layout>
