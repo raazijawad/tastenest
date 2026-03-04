@@ -173,18 +173,18 @@ export default function ProductShow({ id }: Props) {
             <Head title={`${product.name} - TasteNest`} />
 
             <div className="relative min-h-screen w-full bg-[#111315] text-white overflow-hidden">
-                <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-16">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20 lg:py-16">
                     <Link href="/menu" className="group inline-flex items-center gap-3 text-xs tracking-[0.2em] font-semibold uppercase text-gray-400 hover:text-white mb-6">
                         <span className="w-8 h-[1px] bg-gray-600 group-hover:bg-[#E05D36]" />
                         Back to Menu
                     </Link>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         {/* IMAGE */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="relative aspect-square w-full lg:w-[75%] mx-auto rounded-sm overflow-hidden border border-white/5 shadow-2xl"
+                            className="relative aspect-square w-full max-w-md mx-auto lg:max-w-none lg:w-[75%] lg:mx-0 rounded-sm overflow-hidden border border-white/5 shadow-2xl"
                         >
                             <motion.img
                                 initial={{ scale: 1.1 }}
@@ -200,24 +200,24 @@ export default function ProductShow({ id }: Props) {
                             variants={staggerContainer}
                             initial="hidden"
                             animate="show"
-                            className="flex flex-col justify-center max-w-[80%]"
+                            className="flex flex-col justify-center"
                         >
-                            <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-2F">
+                            <motion.div variants={fadeInUp} className="flex items-center gap-4 mb-2">
                                 <span className="text-xs tracking-[0.2em] uppercase text-[#E05D36] font-semibold">{product.category}</span>
                                 <div className="h-[1px] w-10 bg-white/20" />
                             </motion.div>
 
-                            <motion.h1 variants={fadeInUp} className="text-3xl lg:text-5xl font-serif leading-none tracking-tight mb-2 mt-2">
+                            <motion.h1 variants={fadeInUp} className="text-3xl sm:text-4xl lg:text-5xl font-serif leading-none tracking-tight mb-2 mt-2">
                                 {product.name}
                             </motion.h1>
 
                             <motion.div variants={fadeInUp} className="flex items-baseline gap-3 mb-1">
-                                <span className="text-2xl lg:text-3xl font-semibold text-white">${calculatedPrice.toFixed(2)}</span>
+                                <span className="text-2xl sm:text-3xl font-semibold text-white">${calculatedPrice.toFixed(2)}</span>
                                 {(selectedSize || selectedAddons.length > 0)}
                             </motion.div>
 
                             <motion.div variants={fadeInUp}>
-                                <p className="text-gray-400 text-base lg:text-sm leading-relaxed mb-4 border-l border-[#E05D36] pl-6 py-2">
+                                <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-4 border-l border-[#E05D36] pl-4 sm:pl-6 py-2">
                                     {product.description || 'No description available'}
                                 </p>
                             </motion.div>
@@ -235,7 +235,7 @@ export default function ProductShow({ id }: Props) {
                                                 <select
                                                     value={selectedSize}
                                                     onChange={(e) => setSelectedSize(e.target.value)}
-                                                    className="w-full bg-[#1a1c1e] border border-white/10 text-white px-3 py-2 text-xs outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none [&>option]:bg-[#1a1c1e] [&>option]:text-white"
+                                                    className="w-full bg-[#1a1c1e] border border-white/10 text-white px-3 py-2.5 text-xs outline-none focus:border-[#E05D36] transition-colors cursor-pointer appearance-none [&>option]:bg-[#1a1c1e] [&>option]:text-white"
                                                     style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E05D36'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '0.75rem' }}
                                                 >
                                                     {sizeOptions.map((option, index) => (
@@ -257,7 +257,7 @@ export default function ProductShow({ id }: Props) {
                                                     {addons.map((addon, index) => (
                                                         <label
                                                             key={index}
-                                                            className="flex items-center justify-between p-2 border border-white/10 rounded-sm cursor-pointer hover:border-[#E05D36]/50 hover:bg-white/5 transition-all group"
+                                                            className="flex items-center justify-between p-2.5 border border-white/10 rounded-sm cursor-pointer hover:border-[#E05D36]/50 hover:bg-white/5 transition-all group"
                                                         >
                                                             <div className="flex items-center gap-2">
                                                                 <input
@@ -276,7 +276,7 @@ export default function ProductShow({ id }: Props) {
                                                                     {addon.name}
                                                                 </span>
                                                             </div>
-                                                            <span className="text-xs text-[#E05D36] font-semibold">
+                                                            <span className="text-xs text-[#E05D36] font-semibold whitespace-nowrap ml-2">
                                                                 +${parseFloat(addon.price).toFixed(2)}
                                                             </span>
                                                         </label>
@@ -292,7 +292,7 @@ export default function ProductShow({ id }: Props) {
                             <motion.div variants={fadeInUp} className="mb-4 pb-4 border-b border-white/10">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs tracking-[0.2em] uppercase text-gray-400">Total Price</span>
-                                    <span className="text-3xl font-semibold text-[#E05D36]">${calculatedPrice.toFixed(2)}</span>
+                                    <span className="text-2xl sm:text-3xl font-semibold text-[#E05D36]">${calculatedPrice.toFixed(2)}</span>
                                 </div>
                                 {(selectedSize || selectedAddons.length > 0) && (
                                     <div className="mt-1 space-y-1 text-xs text-gray-500">
@@ -322,12 +322,12 @@ export default function ProductShow({ id }: Props) {
                                 )}
                             </motion.div>
 
-                            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
-                                <button className="bg-[#E05D36] text-white px-8 py-2 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:bg-[#C8502D] transition-colors">
+                            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-3">
+                                <button className="bg-[#E05D36] text-white px-6 py-3 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:bg-[#C8502D] transition-colors">
                                     Add to Order
                                 </button>
 
-                                <button className="border border-white/20 text-white px-8 py-4 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:border-white transition-colors">
+                                <button className="border border-white/20 text-white px-6 py-3 text-xs tracking-[0.2em] font-semibold uppercase flex-1 hover:border-white transition-colors">
                                     Customize
                                 </button>
                             </motion.div>
@@ -342,13 +342,25 @@ export default function ProductShow({ id }: Props) {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true, margin: "-80px" }}
                         transition={{ duration: 0.7 }}
-                        className="py-6 px-6 lg:px-10 border-t border-white/5"
+                        className="py-12 lg:py-16 px-4 sm:px-6 lg:px-10 border-t border-white/5"
                     >
                         <div className="max-w-6xl mx-auto">
-
+                            {/* Header */}
+                            <div className="flex flex-col items-center gap-3 mb-8 lg:mb-12">
+                                <div className="flex items-center gap-3">
+                                    <span className="w-8 h-[1px] bg-[#E05D36]" />
+                                    <span className="font-sans text-[#E05D36] text-[9px] sm:text-xs tracking-[0.35em] uppercase font-bold">
+                                        Explore More
+                                    </span>
+                                    <span className="w-8 h-[1px] bg-[#E05D36]" />
+                                </div>
+                                <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-white text-center tracking-tight">
+                                    More From Our Menu
+                                </h2>
+                            </div>
 
                             {/* Products Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                            <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
                                 {categoryProducts.slice(0, 6).map((catProduct, idx) => (
                                     <motion.div
                                         key={catProduct.id}
@@ -359,7 +371,7 @@ export default function ProductShow({ id }: Props) {
                                         className="group relative flex flex-col bg-[#1a1a1a] border border-white/5 overflow-hidden transition-all duration-500 hover:border-white/20"
                                     >
                                         {/* Image */}
-                                        <div className="w-full h-[160px] overflow-hidden relative">
+                                        <div className="w-full h-[140px] sm:h-[160px] overflow-hidden relative">
                                             <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none" />
                                             {catProduct.image ? (
                                                 <img
@@ -369,7 +381,7 @@ export default function ProductShow({ id }: Props) {
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                                                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="w-8 h-8 sm:w-12 sm:h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                 </div>
@@ -378,23 +390,23 @@ export default function ProductShow({ id }: Props) {
                                         </div>
 
                                         {/* Content */}
-                                        <div className="p-4 flex flex-col flex-grow relative z-30 -mt-2">
-                                            <span className="font-sans text-[8px] text-[#E05D36] tracking-[0.2em] uppercase font-semibold mb-1">
+                                        <div className="p-3 sm:p-4 flex flex-col flex-grow relative z-30 -mt-2">
+                                            <span className="font-sans text-[7px] sm:text-[8px] text-[#E05D36] tracking-[0.2em] uppercase font-semibold mb-1">
                                                 {catProduct.category}
                                             </span>
-                                            <h3 className="font-serif text-[13px] text-[#E05D36] mb-1 font-semibold tracking-wide group-hover:text-white transition-colors duration-500 line-clamp-1">
+                                            <h3 className="font-serif text-[11px] sm:text-[13px] text-[#E05D36] mb-1 font-semibold tracking-wide group-hover:text-white transition-colors duration-500 line-clamp-1">
                                                 {catProduct.name}
                                             </h3>
 
-                                            <p className="font-sans text-[10px] text-gray-500 mb-3 line-clamp-2">
+                                            <p className="font-sans text-[9px] sm:text-[10px] text-gray-500 mb-3 line-clamp-2 leading-relaxed">
                                                 {catProduct.description || 'No description'}
                                             </p>
 
                                             <div className="flex items-center gap-2 mb-3">
-                                                <span className="font-sans text-[13px] text-white font-semibold">${parseFloat(catProduct.price).toFixed(2)}</span>
+                                                <span className="font-sans text-[11px] sm:text-[13px] text-white font-semibold">${parseFloat(catProduct.price).toFixed(2)}</span>
                                             </div>
 
-                                            <Link href={`/product/${catProduct.id}`} className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-4 py-2 w-fit text-[9px] tracking-[0.2em] font-semibold uppercase transition-colors">
+                                            <Link href={`/product/${catProduct.id}`} className="relative overflow-hidden group/btn bg-[#E05D36] text-white px-3 sm:px-4 py-1.5 sm:py-2 w-fit text-[8px] sm:text-[9px] tracking-[0.2em] font-semibold uppercase transition-colors">
                                                 <span className="relative z-10">View</span>
                                                 <div className="absolute inset-0 bg-[#C8502D] scale-x-0 origin-left group-hover/btn:scale-x-100 transition-transform duration-300" />
                                             </Link>
@@ -407,13 +419,13 @@ export default function ProductShow({ id }: Props) {
                 )}
 
                 {/* Footer Section */}
-                <footer className="relative w-full bg-[#111315] pt-20 pb-10 px-6 lg:px-12 border-t border-white/5 font-sans selection:bg-[#E05D36]/30">
+                <footer className="relative w-full bg-[#111315] pt-16 pb-10 px-4 sm:px-6 lg:px-12 border-t border-white/5 font-sans selection:bg-[#E05D36]/30">
                     <div className="absolute inset-0 z-0 bg-noise opacity-20 mix-blend-overlay pointer-events-none" />
 
                     <div className="relative z-10 max-w-6xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8 mb-16">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12 lg:mb-16">
                             {/* Brand Column */}
-                            <div className="col-span-1 md:col-span-1 flex flex-col">
+                            <div className="col-span-1 flex flex-col">
                                 <div className="font-serif text-xl tracking-[0.15em] font-bold text-white uppercase mb-6 flex items-center gap-2">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                                         <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.43 4 16.05 4 12C4 7.95 7.05 4.57 11 4.07V19.93ZM13 4.07C16.95 4.57 20 7.95 20 12C20 16.05 16.95 19.43 13 19.93V4.07Z" fill="currentColor" />
@@ -423,7 +435,7 @@ export default function ProductShow({ id }: Props) {
                                 <p className="text-gray-400 text-xs leading-loose font-light max-w-[250px] text-justify">
                                     Lorem ipsum dolor sit amet consectetur. Tristique cursus morbi nibh nec et vulputate. Turpis tortor nisi imperdiet quis accumsan.
                                 </p>
-                                <div className="flex gap-4 mt-8">
+                                <div className="flex gap-3 mt-6">
                                     {[
                                         { name: "Fb", icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="currentColor"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z" /></svg>, link: "#" },
                                         { name: "Tw", icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.016 10.016 0 01-3.127 1.195 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" /></svg>, link: "#" },
@@ -438,9 +450,9 @@ export default function ProductShow({ id }: Props) {
                             </div>
 
                             {/* Opening Hours */}
-                            <div className="col-span-1 md:col-span-1 flex flex-col">
+                            <div className="col-span-1 flex flex-col">
                                 <h4 className="text-white text-[13px] tracking-wider font-bold mb-6">Opening Restaurant</h4>
-                                <div className="flex flex-col gap-4 text-xs text-gray-400 font-light">
+                                <div className="flex flex-col gap-3 text-xs text-gray-400 font-light">
                                     <p>Sa - We: 09:00am - 10:00pm</p>
                                     <p>Thu - We: 09:00am - 10:00pm</p>
                                     <p>Friday Closed</p>
@@ -448,9 +460,9 @@ export default function ProductShow({ id }: Props) {
                             </div>
 
                             {/* User Link */}
-                            <div className="col-span-1 md:col-span-1 flex flex-col">
+                            <div className="col-span-1 flex flex-col">
                                 <h4 className="text-white text-[13px] tracking-wider font-bold mb-6">User Link</h4>
-                                <ul className="flex flex-col gap-3 text-xs text-gray-400 font-light">
+                                <ul className="flex flex-col gap-2.5 text-xs text-gray-400 font-light">
                                     {['About Us', 'Contact Us', 'Order Delivery', 'Payment & Tax', 'Terms of Services'].map((link, i) => (
                                         <li key={i}>
                                             <a href="#" className="hover:text-white transition-colors duration-300">{link}</a>
@@ -460,15 +472,15 @@ export default function ProductShow({ id }: Props) {
                             </div>
 
                             {/* Contact Us */}
-                            <div className="col-span-1 md:col-span-1 flex flex-col">
+                            <div className="col-span-1 flex flex-col">
                                 <h4 className="text-white text-[13px] tracking-wider font-bold mb-6">Contact Us</h4>
-                                <div className="flex flex-col gap-4 text-xs text-gray-400 font-light mb-6">
+                                <div className="flex flex-col gap-3 text-xs text-gray-400 font-light mb-4">
                                     <p>1243 Country Club Ave,<br />NC 27587, London, UK</p>
                                     <p>+1 257-854-1123</p>
                                 </div>
 
                                 {/* Small Subscribe Form in Footer */}
-                                <form className="flex w-full mt-4" onSubmit={(e) => e.preventDefault()}>
+                                <form className="flex w-full mt-2" onSubmit={(e) => e.preventDefault()}>
                                     <input
                                         type="email"
                                         placeholder="Email"
@@ -486,8 +498,8 @@ export default function ProductShow({ id }: Props) {
                         </div>
 
                         {/* Bottom Bar */}
-                        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <p className="text-gray-500 text-xs">© 2024 TasteNest. All rights reserved.</p>
+                        <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <p className="text-gray-500 text-xs text-center sm:text-left">© 2024 TasteNest. All rights reserved.</p>
                             <div className="flex gap-6 text-xs text-gray-500">
                                 <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
                                 <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
