@@ -1148,8 +1148,17 @@ export default function AdminDashboard({ auth }: any) {
                                                                 setEditImagePreviewDetails(product.image ? `/storage/${product.image}` : null);
                                                                 const sizeOpts = Array.isArray(product.size_options) ? product.size_options : [];
                                                                 const addonOpts = Array.isArray(product.addons) ? product.addons : [];
-                                                                setEditSizeOptionsDetails(sizeOpts.map((opt: any) => ({ ...opt, enabled: true })));
-                                                                setEditAddonsDetails(addonOpts.map((opt: any) => ({ ...opt, enabled: true })));
+                                                                // Restore enabled state from saved data, default to true if not present
+                                                                setEditSizeOptionsDetails(sizeOpts.map((opt: any) => ({ 
+                                                                    size: opt.size, 
+                                                                    price: opt.price, 
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true 
+                                                                })));
+                                                                setEditAddonsDetails(addonOpts.map((opt: any) => ({ 
+                                                                    name: opt.name, 
+                                                                    price: opt.price, 
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true 
+                                                                })));
                                                                 setShowEditProductDetails(true);
                                                             }}
                                                             className="p-2 text-gray-400 hover:text-[#E05D36] hover:bg-gray-100 rounded-lg transition"
@@ -1804,13 +1813,12 @@ export default function AdminDashboard({ auth }: any) {
                                                         formData.append('price', editProductPriceDetails);
                                                         formData.append('description', editProductDescriptionDetails);
                                                         formData.append('status', editingProductDetails.status);
-                                                        const enabledSizeOptions = editSizeOptionsDetails.filter(opt => opt.enabled);
-                                                        const enabledAddons = editAddonsDetails.filter(opt => opt.enabled);
-                                                        if (enabledSizeOptions.length > 0) {
-                                                            formData.append('size_options', JSON.stringify(enabledSizeOptions.map(({ size, price }) => ({ size, price }))));
+                                                        // Save ALL size options and addons with their enabled state
+                                                        if (editSizeOptionsDetails.length > 0) {
+                                                            formData.append('size_options', JSON.stringify(editSizeOptionsDetails));
                                                         }
-                                                        if (enabledAddons.length > 0) {
-                                                            formData.append('addons', JSON.stringify(enabledAddons.map(({ name, price }) => ({ name, price }))));
+                                                        if (editAddonsDetails.length > 0) {
+                                                            formData.append('addons', JSON.stringify(editAddonsDetails));
                                                         }
                                                         if (editProductImageDetails) {
                                                             formData.append('image', editProductImageDetails);

@@ -53,13 +53,16 @@ export default function ProductShow({ id }: Props) {
     }, [id]);
 
     // Parse size_options and addons from JSON string if needed
-    const sizeOptions: SizeOption[] = Array.isArray(product?.size_options)
+    // Filter to only show enabled options (enabled field defaults to true if not present)
+    const sizeOptions: SizeOption[] = (Array.isArray(product?.size_options)
         ? product.size_options
-        : product?.size_options ? JSON.parse(product.size_options) : [];
+        : product?.size_options ? JSON.parse(product.size_options) : [])
+        .filter((opt: any) => opt.enabled !== false);
 
-    const addons: Addon[] = Array.isArray(product?.addons)
+    const addons: Addon[] = (Array.isArray(product?.addons)
         ? product.addons
-        : product?.addons ? JSON.parse(product.addons) : [];
+        : product?.addons ? JSON.parse(product.addons) : [])
+        .filter((opt: any) => opt.enabled !== false);
 
     // Auto-select first size option when product loads
     useEffect(() => {
