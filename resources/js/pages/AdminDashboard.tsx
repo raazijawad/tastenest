@@ -712,6 +712,52 @@ export default function AdminDashboard({ auth }: any) {
                                                                 {sizeOptions.length === 0 && (
                                                                     <p className="text-xs text-gray-400 mt-1">No size options added</p>
                                                                 )}
+
+                                                                {/* Portion Options */}
+                                                                <div className="space-y-2">
+                                                                    {portionOptions.map((option, index) => (
+                                                                        <div key={index} className="flex gap-2">
+                                                                            <select
+                                                                                value={option.portion}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...portionOptions];
+                                                                                    newOptions[index].portion = e.target.value;
+                                                                                    setPortionOptions(newOptions);
+                                                                                }}
+                                                                                className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                            >
+                                                                                <option value="">Select Portion</option>
+                                                                                <option value="Normal Portion">Normal Portion</option>
+                                                                                <option value="Full Portion">Full Portion</option>
+                                                                            </select>
+                                                                            <input
+                                                                                type="number"
+                                                                                step="0.01"
+                                                                                value={option.price}
+                                                                                onChange={(e) => {
+                                                                                    const newOptions = [...portionOptions];
+                                                                                    newOptions[index].price = e.target.value;
+                                                                                    setPortionOptions(newOptions);
+                                                                                }}
+                                                                                placeholder="Price"
+                                                                                className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => {
+                                                                                    const newOptions = portionOptions.filter((_, i) => i !== index);
+                                                                                    setPortionOptions(newOptions);
+                                                                                }}
+                                                                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                            >
+                                                                                <Plus size={14} className="rotate-45" />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {portionOptions.length === 0 && (
+                                                                    <p className="text-xs text-gray-400 mt-1">No portion options added</p>
+                                                                )}
                                                             </div>
 
                                                             {/* Add-ons */}
@@ -1344,6 +1390,52 @@ export default function AdminDashboard({ auth }: any) {
                                                     {editSizeOptions.length === 0 && (
                                                         <p className="text-xs text-gray-400 mt-1">No size options added</p>
                                                     )}
+
+                                                    {/* Portion Options */}
+                                                    <div className="space-y-2">
+                                                        {editPortionOptions.map((option, index) => (
+                                                            <div key={index} className="flex gap-2">
+                                                                <select
+                                                                    value={option.portion}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editPortionOptions];
+                                                                        newOptions[index].portion = e.target.value;
+                                                                        setEditPortionOptions(newOptions);
+                                                                    }}
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                >
+                                                                    <option value="">Select Portion</option>
+                                                                    <option value="Normal Portion">Normal Portion</option>
+                                                                    <option value="Full Portion">Full Portion</option>
+                                                                </select>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.price}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editPortionOptions];
+                                                                        newOptions[index].price = e.target.value;
+                                                                        setEditPortionOptions(newOptions);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        const newOptions = editPortionOptions.filter((_, i) => i !== index);
+                                                                        setEditPortionOptions(newOptions);
+                                                                    }}
+                                                                    className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition"
+                                                                >
+                                                                    <Plus size={14} className="rotate-45" />
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editPortionOptions.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No portion options added</p>
+                                                    )}
                                                 </div>
 
                                                 {/* Add-ons */}
@@ -1685,6 +1777,55 @@ export default function AdminDashboard({ auth }: any) {
                                                     </div>
                                                     {editSizeOptionsDetails.length === 0 && (
                                                         <p className="text-xs text-gray-400 mt-1">No size options added</p>
+                                                    )}
+
+                                                    {/* Portion Options */}
+                                                    <div className="space-y-2">
+                                                        {editPortionOptionsDetails.map((option, index) => (
+                                                            <div key={index} className="flex gap-2 items-center">
+                                                                <select
+                                                                    value={option.portion}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editPortionOptionsDetails];
+                                                                        newOptions[index].portion = e.target.value;
+                                                                        setEditPortionOptionsDetails(newOptions);
+                                                                    }}
+                                                                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                >
+                                                                    <option value="">Select Portion</option>
+                                                                    <option value="Normal Portion">Normal Portion</option>
+                                                                    <option value="Full Portion">Full Portion</option>
+                                                                </select>
+                                                                <input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.price}
+                                                                    onChange={(e) => {
+                                                                        const newOptions = [...editPortionOptionsDetails];
+                                                                        newOptions[index].price = e.target.value;
+                                                                        setEditPortionOptionsDetails(newOptions);
+                                                                    }}
+                                                                    placeholder="Price"
+                                                                    className="w-24 px-2 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E05D36]/20 focus:border-[#E05D36]/40 text-xs"
+                                                                />
+                                                                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={option.enabled}
+                                                                        onChange={() => {
+                                                                            const newOptions = [...editPortionOptionsDetails];
+                                                                            newOptions[index].enabled = !newOptions[index].enabled;
+                                                                            setEditPortionOptionsDetails(newOptions);
+                                                                        }}
+                                                                        className="sr-only peer"
+                                                                    />
+                                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#E05D36]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E05D36]"></div>
+                                                                </label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {editPortionOptionsDetails.length === 0 && (
+                                                        <p className="text-xs text-gray-400 mt-1">No portion options added</p>
                                                     )}
                                                 </div>
 
