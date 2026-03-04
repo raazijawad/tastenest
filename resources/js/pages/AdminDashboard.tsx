@@ -943,12 +943,10 @@ export default function AdminDashboard({ auth }: any) {
                                                                             allSizeOptions.push({ size: opt.portion, price: opt.price });
                                                                         });
                                                                     }
-                                                                    if (allSizeOptions.length > 0) {
-                                                                        formData.append('size_options', JSON.stringify(allSizeOptions));
-                                                                    }
-                                                                    if (addons.length > 0) {
-                                                                        formData.append('addons', JSON.stringify(addons));
-                                                                    }
+                                                                    // Always send size_options (even if empty array)
+                                                                    formData.append('size_options', JSON.stringify(allSizeOptions));
+                                                                    // Always send addons (even if empty array)
+                                                                    formData.append('addons', JSON.stringify(addons));
                                                                     if (newProductImage) {
                                                                         formData.append('image', newProductImage);
                                                                     }
@@ -1665,12 +1663,10 @@ export default function AdminDashboard({ auth }: any) {
                                                                 allSizeOptions.push({ size: opt.portion, price: opt.price });
                                                             });
                                                         }
-                                                        if (allSizeOptions.length > 0) {
-                                                            formData.append('size_options', JSON.stringify(allSizeOptions));
-                                                        }
-                                                        if (editAddons.length > 0) {
-                                                            formData.append('addons', JSON.stringify(editAddons));
-                                                        }
+                                                        // Always send size_options (even if empty array)
+                                                        formData.append('size_options', JSON.stringify(allSizeOptions));
+                                                        // Always send addons (even if empty array)
+                                                        formData.append('addons', JSON.stringify(editAddons));
                                                         if (editProductImage) {
                                                             formData.append('image', editProductImage);
                                                         }
@@ -2084,13 +2080,10 @@ export default function AdminDashboard({ auth }: any) {
                                                                 allSizeOptions.push({ size: opt.portion, price: opt.price, enabled: opt.enabled });
                                                             });
                                                         }
-                                                        // Save ALL size options and addons with their enabled state
-                                                        if (allSizeOptions.length > 0) {
-                                                            formData.append('size_options', JSON.stringify(allSizeOptions));
-                                                        }
-                                                        if (editAddonsDetails.length > 0) {
-                                                            formData.append('addons', JSON.stringify(editAddonsDetails));
-                                                        }
+                                                        // Always send size_options (even if empty array)
+                                                        formData.append('size_options', JSON.stringify(allSizeOptions));
+                                                        // Always send addons (even if empty array)
+                                                        formData.append('addons', JSON.stringify(editAddonsDetails));
                                                         if (editProductImageDetails) {
                                                             formData.append('image', editProductImageDetails);
                                                         }

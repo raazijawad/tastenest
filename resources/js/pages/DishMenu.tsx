@@ -33,14 +33,41 @@ export default function DishMenu() {
         const fetchData = async () => {
             try {
                 const [productsRes, categoriesRes] = await Promise.all([
-                    axios.get('/api/products'),
-                    axios.get('/api/categories')
+                    axios.get('/api/products', {
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        },
+                        params: {
+                            _t: Date.now() // Cache busting
+                        }
+                    }),
+                    axios.get('/api/categories', {
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        },
+                        params: {
+                            _t: Date.now() // Cache busting
+                        }
+                    })
                 ]);
-                
-                // Filter only available products
-                const availableProducts = productsRes.data.filter((p: Product) => p.status === 'Available');
+
+                // Filter only available products and deduplicate by id
+                const availableProducts = productsRes.data
+                    .filter((p: Product) => p.status === 'Available')
+                    .filter((p: Product, index: number, self: Product[]) => 
+                        index === self.findIndex((p2) => p2.id === p.id)
+                    );
                 setProducts(availableProducts);
-                setCategories(categoriesRes.data.filter((c: Category) => c.status === 'Active'));
+                
+                // Deduplicate categories
+                const uniqueCategories = categoriesRes.data
+                    .filter((c: Category) => c.status === 'Active')
+                    .filter((c: Category, index: number, self: Category[]) =>
+                        index === self.findIndex((c2) => c2.id === c.id)
+                    );
+                setCategories(uniqueCategories);
             } catch (error) {
                 console.error('Error fetching menu data:', error);
             } finally {

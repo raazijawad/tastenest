@@ -97,14 +97,18 @@ class ProductController extends Controller
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        // Handle size_options
+        // Handle size_options - always set (even if empty array)
         if (isset($validated['size_options'])) {
             $validated['size_options'] = json_decode($validated['size_options'], true);
+        } else {
+            $validated['size_options'] = null;
         }
 
-        // Handle addons
+        // Handle addons - always set (even if empty array)
         if (isset($validated['addons'])) {
             $validated['addons'] = json_decode($validated['addons'], true);
+        } else {
+            $validated['addons'] = null;
         }
 
         $product->update($validated);
