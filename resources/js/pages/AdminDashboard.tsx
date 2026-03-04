@@ -911,8 +911,15 @@ export default function AdminDashboard({ auth }: any) {
                                                                     formData.append('price', newProductPrice);
                                                                     formData.append('description', newProductDescription);
                                                                     formData.append('status', 'Available');
-                                                                    if (sizeOptions.length > 0) {
-                                                                        formData.append('size_options', JSON.stringify(sizeOptions));
+                                                                    // Combine size and portion options
+                                                                    const allSizeOptions = [...sizeOptions];
+                                                                    if (portionOptions.length > 0) {
+                                                                        portionOptions.forEach((opt) => {
+                                                                            allSizeOptions.push({ size: opt.portion, price: opt.price });
+                                                                        });
+                                                                    }
+                                                                    if (allSizeOptions.length > 0) {
+                                                                        formData.append('size_options', JSON.stringify(allSizeOptions));
                                                                     }
                                                                     if (addons.length > 0) {
                                                                         formData.append('addons', JSON.stringify(addons));
@@ -936,6 +943,7 @@ export default function AdminDashboard({ auth }: any) {
                                                                         setNewProductImage(null);
                                                                         setImagePreview(null);
                                                                         setSizeOptions([]);
+                                                                        setPortionOptions([]);
                                                                         setAddons([]);
                                                                         setShowAddProduct(false);
                                                                     })
@@ -1035,8 +1043,12 @@ export default function AdminDashboard({ auth }: any) {
                                                                 setEditProductCategory(product.category || '');
                                                                 setEditProductDescription(product.description || '');
                                                                 setEditImagePreview(product.image ? `/storage/${product.image}` : null);
-                                                                // size_options and addons are already arrays from Laravel's JSON cast
-                                                                setEditSizeOptions(Array.isArray(product.size_options) ? product.size_options : []);
+                                                                // Separate size options from portion options
+                                                                const sizeOpts = Array.isArray(product.size_options) ? product.size_options : [];
+                                                                const portionOpts = sizeOpts.filter((opt: any) => ['Normal Portion', 'Full Portion'].includes(opt.size));
+                                                                const regularSizeOpts = sizeOpts.filter((opt: any) => !['Normal Portion', 'Full Portion'].includes(opt.size));
+                                                                setEditSizeOptions(regularSizeOpts.map((opt: any) => ({ size: opt.size, price: opt.price })));
+                                                                setEditPortionOptions(portionOpts.map((opt: any) => ({ portion: opt.size, price: opt.price })));
                                                                 setEditAddons(Array.isArray(product.addons) ? product.addons : []);
                                                                 setShowEditProduct(true);
                                                             }}
@@ -1206,13 +1218,21 @@ export default function AdminDashboard({ auth }: any) {
                                                                 setEditImagePreviewDetails(product.image ? `/storage/${product.image}` : null);
                                                                 const sizeOpts = Array.isArray(product.size_options) ? product.size_options : [];
                                                                 const addonOpts = Array.isArray(product.addons) ? product.addons : [];
+                                                                // Separate size options from portion options
+                                                                const portionOpts = sizeOpts.filter((opt: any) => ['Normal Portion', 'Full Portion'].includes(opt.size));
+                                                                const regularSizeOpts = sizeOpts.filter((opt: any) => !['Normal Portion', 'Full Portion'].includes(opt.size));
                                                                 // Restore enabled state from saved data, default to true if not present
-                                                                setEditSizeOptionsDetails(sizeOpts.map((opt: any) => ({ 
-                                                                    size: opt.size, 
-                                                                    price: opt.price, 
-                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true 
+                                                                setEditSizeOptionsDetails(regularSizeOpts.map((opt: any) => ({
+                                                                    size: opt.size,
+                                                                    price: opt.price,
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true
                                                                 })));
-                                                                setEditAddonsDetails(addonOpts.map((opt: any) => ({ 
+                                                                setEditPortionOptionsDetails(portionOpts.map((opt: any) => ({
+                                                                    portion: opt.size,
+                                                                    price: opt.price,
+                                                                    enabled: opt.enabled !== undefined ? opt.enabled : true
+                                                                })));
+                                                                setEditAddonsDetails(addonOpts.map((opt: any) => ({
                                                                     name: opt.name, 
                                                                     price: opt.price, 
                                                                     enabled: opt.enabled !== undefined ? opt.enabled : true 
@@ -1590,8 +1610,15 @@ export default function AdminDashboard({ auth }: any) {
                                                         formData.append('price', editProductPrice);
                                                         formData.append('description', editProductDescription);
                                                         formData.append('status', editingProduct.status);
-                                                        if (editSizeOptions.length > 0) {
-                                                            formData.append('size_options', JSON.stringify(editSizeOptions));
+                                                        // Combine size and portion options
+                                                        const allSizeOptions = [...editSizeOptions];
+                                                        if (editPortionOptions.length > 0) {
+                                                            editPortionOptions.forEach((opt) => {
+                                                                allSizeOptions.push({ size: opt.portion, price: opt.price });
+                                                            });
+                                                        }
+                                                        if (allSizeOptions.length > 0) {
+                                                            formData.append('size_options', JSON.stringify(allSizeOptions));
                                                         }
                                                         if (editAddons.length > 0) {
                                                             formData.append('addons', JSON.stringify(editAddons));
@@ -1614,6 +1641,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditProductImage(null);
                                                             setEditImagePreview(null);
                                                             setEditSizeOptions([]);
+                                                            setEditPortionOptions([]);
                                                             setEditAddons([]);
                                                             setEditingProduct(null);
                                                             setShowEditProduct(false);
@@ -1984,9 +2012,16 @@ export default function AdminDashboard({ auth }: any) {
                                                         formData.append('price', editProductPriceDetails);
                                                         formData.append('description', editProductDescriptionDetails);
                                                         formData.append('status', editingProductDetails.status);
+                                                        // Combine size and portion options with enabled state
+                                                        const allSizeOptions = [...editSizeOptionsDetails];
+                                                        if (editPortionOptionsDetails.length > 0) {
+                                                            editPortionOptionsDetails.forEach((opt) => {
+                                                                allSizeOptions.push({ size: opt.portion, price: opt.price, enabled: opt.enabled });
+                                                            });
+                                                        }
                                                         // Save ALL size options and addons with their enabled state
-                                                        if (editSizeOptionsDetails.length > 0) {
-                                                            formData.append('size_options', JSON.stringify(editSizeOptionsDetails));
+                                                        if (allSizeOptions.length > 0) {
+                                                            formData.append('size_options', JSON.stringify(allSizeOptions));
                                                         }
                                                         if (editAddonsDetails.length > 0) {
                                                             formData.append('addons', JSON.stringify(editAddonsDetails));
@@ -2009,6 +2044,7 @@ export default function AdminDashboard({ auth }: any) {
                                                             setEditProductImageDetails(null);
                                                             setEditImagePreviewDetails(null);
                                                             setEditSizeOptionsDetails([]);
+                                                            setEditPortionOptionsDetails([]);
                                                             setEditAddonsDetails([]);
                                                             setEditingProductDetails(null);
                                                             setShowEditProductDetails(false);
